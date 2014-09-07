@@ -21,10 +21,28 @@ public class SqormCursorTest {
 
         boolean recordsValid = true;
         int count = 0;
-        String sql = "select * from test";
 
         try(Connection con = ds.getConnection()) {
-            try(PreparedStatement stmt = con.prepareStatement(sql)) {
+            con.setAutoCommit(true);
+
+            // drop tables
+            String drop = "drop table if exists `sqorm`.`customer`;";
+            try(PreparedStatement stmt = con.prepareStatement(drop)) {
+                stmt.execute();
+            }
+
+            // Create customers
+            String createTables = "CREATE TABLE `sqorm`.`customer` (\n" +
+                    "  `customer_id` INT NOT NULL,\n" +
+                    "  `name` VARCHAR(45) NOT NULL,\n" +
+                    "  PRIMARY KEY (`customer_id`));";
+            try(PreparedStatement stmt = con.prepareStatement(createTables)) {
+                stmt.execute();
+            }
+
+            // Select from tables
+            String selectQuery = "select * from customer;";
+            try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 SqormCursor cur = new SqormCursor(stmt);
                 while(cur.hasNext()) {
                     Object record = cur.next();
