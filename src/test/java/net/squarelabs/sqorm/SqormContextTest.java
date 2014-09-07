@@ -1,18 +1,19 @@
 package net.squarelabs.sqorm;
 
+import org.apache.commons.dbcp.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-/*
- * sqorm
- * https://github.com/bgard6977/sqorm
- *
- * Copyright (c) 2014 Brent Gardner
- * Licensed under the MIT license.
- */
 public class SqormContextTest {
     @Test
     public void canInstantiate() {
-        Assert.assertTrue(false);
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName("com.mysql.jdbc.Driver");
+        ds.setUsername("root");
+        ds.setPassword("root");
+        ds.setUrl("jdbc:mysql://localhost/test");
+
+        SqormContext ctx = new SqormContext(ds);
+        Assert.assertNotNull(ctx);
     }
 }
