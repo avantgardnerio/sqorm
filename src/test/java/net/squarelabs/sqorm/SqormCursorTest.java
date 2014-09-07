@@ -26,37 +26,18 @@ public class SqormCursorTest {
             con.setAutoCommit(true);
 
             // use schema
-            String useSchema = "use sqorm;";
-            try(PreparedStatement stmt = con.prepareStatement(useSchema)) {
-                stmt.execute();
-            }
-
-            // drop tables
-            String dropCust = "drop table if exists customer;";
-            try(PreparedStatement stmt = con.prepareStatement(dropCust)) {
-                stmt.execute();
-            }
-            String dropOrder = "drop table if exists orders;";
-            try(PreparedStatement stmt = con.prepareStatement(dropOrder)) {
-                stmt.execute();
-            }
-
-            // Create customers
-            String createTables = "CREATE TABLE customer (\n" +
-                    "  `customer_id` INT NOT NULL,\n" +
-                    "  `name` VARCHAR(45) NOT NULL,\n" +
-                    "  PRIMARY KEY (`customer_id`));";
-            try(PreparedStatement stmt = con.prepareStatement(createTables)) {
-                stmt.execute();
-            }
-
-            // Create orders
-            String createOrders = "CREATE TABLE orders (\n" +
-                    "  `OrderId` INT NOT NULL,\n" +
-                    "  `customer_id` INT NOT NULL,\n" +
-                    "  PRIMARY KEY (`OrderId`));";
-            try(PreparedStatement stmt = con.prepareStatement(createOrders)) {
-                stmt.execute();
+            try(Statement stmt = con.createStatement()) {
+                stmt.execute("use sqorm;");
+                stmt.execute("drop table if exists customer;");
+                stmt.execute("drop table if exists orders;");
+                stmt.execute("CREATE TABLE customer (\n" +
+                        "  `customer_id` INT NOT NULL,\n" +
+                        "  `name` VARCHAR(45) NOT NULL,\n" +
+                        "  PRIMARY KEY (`customer_id`));");
+                stmt.execute("CREATE TABLE orders (\n" +
+                        "  `OrderId` INT NOT NULL,\n" +
+                        "  `customer_id` INT NOT NULL,\n" +
+                        "  PRIMARY KEY (`OrderId`));");
             }
 
             // Select from tables
