@@ -32,8 +32,12 @@ public class SqormCursorTest {
             }
 
             // drop tables
-            String drop = "drop table if exists customer;";
-            try(PreparedStatement stmt = con.prepareStatement(drop)) {
+            String dropCust = "drop table if exists customer;";
+            try(PreparedStatement stmt = con.prepareStatement(dropCust)) {
+                stmt.execute();
+            }
+            String dropOrder = "drop table if exists orders;";
+            try(PreparedStatement stmt = con.prepareStatement(dropOrder)) {
                 stmt.execute();
             }
 
@@ -46,9 +50,19 @@ public class SqormCursorTest {
                 stmt.execute();
             }
 
+            // Create orders
+            String createOrders = "CREATE TABLE orders (\n" +
+                    "  `OrderId` INT NOT NULL,\n" +
+                    "  `customer_id` INT NOT NULL,\n" +
+                    "  PRIMARY KEY (`OrderId`));";
+            try(PreparedStatement stmt = con.prepareStatement(createOrders)) {
+                stmt.execute();
+            }
+
             // Select from tables
-            String selectQuery = "select * from customer;";
+            String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
+                stmt.executeQuery();
                 SqormCursor cur = new SqormCursor(stmt);
                 while(cur.hasNext()) {
                     Object record = cur.next();
