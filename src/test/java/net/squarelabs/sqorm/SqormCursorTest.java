@@ -25,14 +25,20 @@ public class SqormCursorTest {
         try(Connection con = ds.getConnection()) {
             con.setAutoCommit(true);
 
+            // use schema
+            String useSchema = "use sqorm;";
+            try(PreparedStatement stmt = con.prepareStatement(useSchema)) {
+                stmt.execute();
+            }
+
             // drop tables
-            String drop = "drop table if exists `sqorm`.`customer`;";
+            String drop = "drop table if exists customer;";
             try(PreparedStatement stmt = con.prepareStatement(drop)) {
                 stmt.execute();
             }
 
             // Create customers
-            String createTables = "CREATE TABLE `sqorm`.`customer` (\n" +
+            String createTables = "CREATE TABLE customer (\n" +
                     "  `customer_id` INT NOT NULL,\n" +
                     "  `name` VARCHAR(45) NOT NULL,\n" +
                     "  PRIMARY KEY (`customer_id`));";
