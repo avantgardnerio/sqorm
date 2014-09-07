@@ -15,9 +15,9 @@ public class SqormCursor<T> implements Iterator<T> {
     private ResultSet resultSet;
     private ResultSetMetaData metaData;
 
-    public SqormCursor(ResultSet rs) throws SQLException {
-        this.resultSet = rs;
-        this.metaData = rs.getMetaData();
+    public SqormCursor(PreparedStatement stmt) throws SQLException {
+        this.resultSet = stmt.getResultSet();
+        this.metaData = resultSet.getMetaData();
     }
 
     @Override

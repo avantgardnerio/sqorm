@@ -5,32 +5,33 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class SqormCursorTest {
+
     @Test
     public void canIterate() throws Exception {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.mysql.jdbc.Driver");
-        ds.setUsername("root");
-        ds.setPassword("root");
-        ds.setUrl("jdbc:mysql://localhost/test");
+        ds.setUsername("sqorm");
+        ds.setPassword("sqorm");
+        ds.setUrl("jdbc:mysql://127.0.0.1/sqorm");
 
         boolean recordsValid = true;
         int count = 0;
+        String sql = "select * from test";
+
         try(Connection con = ds.getConnection()) {
-            try(Statement stmt = con.createStatement()) {
-                String sql = "select * from test";
-                try(ResultSet res = stmt.executeQuery(sql)) {
-                    SqormCursor cur = new SqormCursor(res);
-                    while(cur.hasNext()) {
-                        Object record = cur.next();
-                        if(record == null) {
-                            recordsValid = false;
-                        }
-                        count++;
+            try(PreparedStatement stmt = con.prepareStatement(sql)) {
+                SqormCursor cur = new SqormCursor(stmt);
+                while(cur.hasNext()) {
+                    Object record = cur.next();
+                    if(record == null) {
+                        recordsValid = false;
                     }
+                    count++;
                 }
             }
         }
