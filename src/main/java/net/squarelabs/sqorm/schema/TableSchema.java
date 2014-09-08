@@ -1,6 +1,5 @@
 package net.squarelabs.sqorm.schema;
 
-import com.google.common.base.Joiner;
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 import net.squarelabs.sqorm.driver.DbDriver;
@@ -9,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
