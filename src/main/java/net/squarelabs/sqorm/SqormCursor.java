@@ -1,15 +1,8 @@
 package net.squarelabs.sqorm;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.Calendar;
 import java.util.Iterator;
-import java.util.TimeZone;
-import java.util.concurrent.ExecutionException;
 
 public class SqormCursor<T> implements Iterator<T> {
     private ResultSet resultSet;
@@ -23,20 +16,20 @@ public class SqormCursor<T> implements Iterator<T> {
     @Override
     public T next() {
         try {
-            if ( !resultSet.next() ) {
+            if (!resultSet.next()) {
                 return null;
             }
-            String className = resultSet.getString( 1 );
-            Class<?> clazz = Class.forName( className );
+            String className = resultSet.getString(1);
+            Class<?> clazz = Class.forName(className);
             Object record = clazz.newInstance();
             int colCount = metaData.getColumnCount();
-            for ( int colIndex = 2; colIndex <= colCount; colIndex++ ) {
-                String colName = metaData.getColumnName( colIndex );
-                Object val = resultSet.getObject( colIndex );
+            for (int colIndex = 2; colIndex <= colCount; colIndex++) {
+                String colName = metaData.getColumnName(colIndex);
+                Object val = resultSet.getObject(colIndex);
                 Method setter = clazz.getMethod(colName); // TODO: Cache reflection
                 setter.invoke(record, val);
             }
-            return (T)record;
+            return (T) record;
         } catch (Exception ex) {
             throw new RuntimeException("Error during cursor iteration!", ex);
         }
