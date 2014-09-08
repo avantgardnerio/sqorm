@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,13 +20,19 @@ public class TableSchema {
     private final Class<?> clazz;
     private final String tableName;
 
+    // Reflection cache
+    private final Map<String, Method> insertFields = new HashMap<>();
+
+
+    // Cached query syntax
+    private final String insertQuery;
+
     public TableSchema(Class<?> clazz, DbDriver driver) {
         this.clazz = clazz;
         tableName = clazz.getAnnotation(Table.class).name();
 
         // Collect accessors
         List<String> values = new ArrayList<>();
-        Map<String, Method> insertFields = new HashMap<>();
         Map<String, Method> getters = new HashMap<>();
         Map<String, Method> setters = new HashMap<>();
         for(Method method : clazz.getMethods()) {
@@ -33,9 +41,12 @@ public class TableSchema {
                 continue;
             }
             String colName = ano.name();
-            Map<String, Method> map = method.getReturnType() == void.class ? setters : getters;
-            map.put(colName, method);
-            insertFields.put(colName, method);
+            if(method.getReturnType() == void.class) {
+                setters.put(colName, method);
+            } else {
+                getters.put(colName, method);
+                insertFields.put(colName, method);
+            }
             values.add("?");
         }
 
@@ -43,11 +54,20 @@ public class TableSchema {
         String valueClause = StringUtils.join(values, ",");
         String delim = driver.ee() + "," + driver.se();
         String insertClause = driver.se() + StringUtils.join(insertFields.keySet(), delim) + driver.ee();
-        String insertQuery = String.format("insert into %s%s$s (%s) values (%s);",
+        insertQuery = String.format("insert into %s%s$s (%s) values (%s);",
                 driver.se(), tableName, driver.ee(), insertClause, valueClause);
     }
 
     public void insert(Connection con, Object record) {
-
+        try(PreparedStatement stmt = con.prepareStatement(insertQuery)) {
+            int i = 1;
+            for(Map.Entry<String, Method> entry : insertFields.entrySet()) {
+                Method getter = entry.getValue();
+                Object val = getter.invoke(record);
+                stmt.setObject(i++, val);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Error inserting record!", ex);
+        }
     }
 }
