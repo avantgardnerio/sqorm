@@ -8,4 +8,14 @@ public interface DbDriver {
     public List<String> getTableNames(Connection con) throws SQLException;
 
     public void dropTables(Connection con) throws SQLException;
+
+    /**
+     * @return Start escape char (e.g. "[", "`", "'")
+     */
+    public String se();
+
+    /**
+     * @return End escape char (e.g. "]", "`", "'")
+     */
+    public String ee();
 }

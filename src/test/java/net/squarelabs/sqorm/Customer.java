@@ -8,6 +8,11 @@ public class Customer {
     private String name;
     private int customerId;
 
+    public Customer(int id, String name) {
+        this.customerId = id;
+        this.name = name;
+    }
+
     @Column(name="customer_id", pkOrdinal = 1)
     public int getCustomerId() {
         return customerId;

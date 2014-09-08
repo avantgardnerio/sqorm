@@ -32,4 +32,14 @@ public class MySqlDriver implements DbDriver {
             }
         }
     }
+
+    @Override
+    public String se() {
+        return "`";
+    }
+
+    @Override
+    public String ee() {
+        return "`";
+    }
 }

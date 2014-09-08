@@ -3,6 +3,7 @@ package net.squarelabs.sqorm;
 import com.googlecode.flyway.core.Flyway;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
+import net.squarelabs.sqorm.schema.TableSchema;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,8 +33,13 @@ public class SqormCursorTest {
             // Rebuild DB
             Flyway flyway = new Flyway();
             flyway.setDataSource(ds);
-            flyway.setLocations("ddl/mysql");
+            flyway.setLocations("ddl/mysql"); // TODO: Parameterize
             flyway.migrate();
+
+            // Add records
+            TableSchema custTable = new TableSchema(Customer.class, driver);
+            custTable.insert(con, new Customer(1, "alice"));
+            custTable.insert(con, new Customer(2, "bob"));
 
             // Select from tables
             String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
