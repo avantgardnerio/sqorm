@@ -13,4 +13,9 @@ public class MySqlDriver implements DbDriver {
     public List<String> getTableNames() {
 
     }
+
+    @Override
+    public void dropTables() {
+
+    }
 }
