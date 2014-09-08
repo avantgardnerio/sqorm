@@ -1,12 +1,13 @@
 package net.squarelabs.sqorm;
 
+import net.squarelabs.sqorm.driver.DbDriver;
+import net.squarelabs.sqorm.driver.DriverFactory;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class SqormCursorTest {
@@ -25,11 +26,11 @@ public class SqormCursorTest {
         try(Connection con = ds.getConnection()) {
             con.setAutoCommit(true);
 
+            DbDriver driver = DriverFactory.getDriver(con);
+            driver.dropTables(con);
+
             // use schema
             try(Statement stmt = con.createStatement()) {
-                stmt.execute("use sqorm;");
-                stmt.execute("drop table if exists customer;");
-                stmt.execute("drop table if exists orders;");
                 stmt.execute("CREATE TABLE customer (\n" +
                         "  `customer_id` INT NOT NULL,\n" +
                         "  `name` VARCHAR(45) NOT NULL,\n" +

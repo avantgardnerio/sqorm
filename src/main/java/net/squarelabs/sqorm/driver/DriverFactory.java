@@ -5,14 +5,15 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 public class DriverFactory {
-    public static DbDriver createWiper(Connection con) throws SQLException {
+
+    public static DbDriver getDriver(Connection con) throws SQLException {
         DatabaseMetaData metaData = con.getMetaData();
         String dbName = metaData.getDatabaseProductName();
         switch(dbName) {
             case "PostgreSQL":
                 throw new RuntimeException("PostGreSQL not yet supported!");
             case "MySQL":
-                return new MySqlDriver(con);
+                return new MySqlDriver();
             case "Microsoft SQL Server":
                 throw new RuntimeException("MS-SQL not yet supported!");
             default:
