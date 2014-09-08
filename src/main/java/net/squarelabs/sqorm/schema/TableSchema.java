@@ -28,7 +28,7 @@ public class TableSchema {
     public TableSchema(Class<?> clazz, DbDriver driver) {
         this.clazz = clazz;
         Table tableAno = clazz.getAnnotation(Table.class);
-        if(tableAno == null) {
+        if (tableAno == null) {
             throw new IllegalArgumentException("Class is not marked with Table annotation!");
         }
         tableName = tableAno.name();
@@ -37,37 +37,41 @@ public class TableSchema {
         List<String> values = new ArrayList<>();
         Map<String, Method> getters = new HashMap<>();
         Map<String, Method> setters = new HashMap<>();
-        for(Method method : clazz.getMethods()) {
+        for (Method method : clazz.getMethods()) {
             Column ano = method.getAnnotation(Column.class);
-            if(ano == null) {
+            if (ano == null) {
                 continue;
             }
             String colName = ano.name();
-            if(method.getReturnType() == void.class) {
+            if (method.getReturnType() == void.class) {
                 setters.put(colName, method);
             } else {
                 getters.put(colName, method);
                 insertFields.put(colName, method);
+                values.add("?");
             }
-            values.add("?");
         }
 
         // Write insert query
         String valueClause = StringUtils.join(values, ",");
         String delim = driver.ee() + "," + driver.se();
         String insertClause = driver.se() + StringUtils.join(insertFields.keySet(), delim) + driver.ee();
-        insertQuery = String.format("insert into %s%s$s (%s) values (%s);",
+        insertQuery = String.format("insert into %s%s%s (%s) values (%s);",
                 driver.se(), tableName, driver.ee(), insertClause, valueClause);
     }
 
     public void insert(Connection con, Object record) {
-        try(PreparedStatement stmt = con.prepareStatement(insertQuery)) {
+        try (PreparedStatement stmt = con.prepareStatement(insertQuery)) {
             int i = 1;
             // TODO: Use TreeMap, List<Tuple>, or otherwise ensure order somehow!
-            for(Map.Entry<String, Method> entry : insertFields.entrySet()) {
+            for (Map.Entry<String, Method> entry : insertFields.entrySet()) {
                 Method getter = entry.getValue();
                 Object val = getter.invoke(record);
                 stmt.setObject(i++, val);
+            }
+            int rowCount = stmt.executeUpdate();
+            if (rowCount != 1) {
+                throw new Exception("Insert failed!");
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error inserting record!", ex);
