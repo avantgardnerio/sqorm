@@ -25,12 +25,11 @@ public class SqormCursorTest {
         int count = 0;
 
         try(Connection con = ds.getConnection()) {
-            con.setAutoCommit(true);
-
+            // Clean DB
             DbDriver driver = DriverFactory.getDriver(con);
             driver.dropTables(con);
 
-            // use schema
+            // Rebuild DB
             Flyway flyway = new Flyway();
             flyway.setDataSource(ds);
             flyway.setLocations("ddl/mysql");
