@@ -61,6 +61,7 @@ public class TableSchema {
     public void insert(Connection con, Object record) {
         try(PreparedStatement stmt = con.prepareStatement(insertQuery)) {
             int i = 1;
+            // TODO: Use TreeMap, List<Tuple>, or otherwise ensure order somehow!
             for(Map.Entry<String, Method> entry : insertFields.entrySet()) {
                 Method getter = entry.getValue();
                 Object val = getter.invoke(record);
