@@ -27,7 +27,11 @@ public class TableSchema {
 
     public TableSchema(Class<?> clazz, DbDriver driver) {
         this.clazz = clazz;
-        tableName = clazz.getAnnotation(Table.class).name();
+        Table tableAno = clazz.getAnnotation(Table.class);
+        if(tableAno == null) {
+            throw new IllegalArgumentException("Class is not marked with Table annotation!");
+        }
+        tableName = tableAno.name();
 
         // Collect accessors
         List<String> values = new ArrayList<>();
