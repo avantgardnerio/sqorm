@@ -15,6 +15,7 @@ hs_err_pid*
 *.ipr
 *.iws
 *.iml
+*.ids
 
 ## Additional for IntelliJ
 out/
