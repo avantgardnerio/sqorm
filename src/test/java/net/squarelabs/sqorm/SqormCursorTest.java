@@ -1,5 +1,6 @@
 package net.squarelabs.sqorm;
 
+import com.googlecode.flyway.core.Flyway;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -30,16 +31,10 @@ public class SqormCursorTest {
             driver.dropTables(con);
 
             // use schema
-            try(Statement stmt = con.createStatement()) {
-                stmt.execute("CREATE TABLE customer (\n" +
-                        "  `customer_id` INT NOT NULL,\n" +
-                        "  `name` VARCHAR(45) NOT NULL,\n" +
-                        "  PRIMARY KEY (`customer_id`));");
-                stmt.execute("CREATE TABLE orders (\n" +
-                        "  `OrderId` INT NOT NULL,\n" +
-                        "  `customer_id` INT NOT NULL,\n" +
-                        "  PRIMARY KEY (`OrderId`));");
-            }
+            Flyway flyway = new Flyway();
+            flyway.setDataSource(ds);
+            flyway.setLocations("ddl/mysql");
+            flyway.migrate();
 
             // Select from tables
             String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
