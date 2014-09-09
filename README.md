@@ -3,6 +3,10 @@ sqorm
 
 /skwôrm/ - Static Query ORM Library in Java
 
+Summary
+-------
+Real ORM, real SQL, no lazy loading.
+
 Features
 --------
 * Write your own select queries in real SQL
