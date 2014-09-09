@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class QueryCache {
 
     private String queryFolder = "queries";
-    private final Map<String, List<Query>> queries = new ConcurrentHashMap<>();
+    private final Map<String, MultiQuery> queries = new ConcurrentHashMap<>();
 
     private final DbDriver driver;
 
@@ -44,7 +44,7 @@ public class QueryCache {
     }
 
     public List<Query> loadQuery(String name) {
-        List<Query> query = queries.get(name);
+        MultiQuery query = queries.get(name);
         if (query != null) {
             return query;
         }
@@ -56,7 +56,11 @@ public class QueryCache {
                 }
                 String sql = IOUtils.toString(stream, "UTF-8");
                 List<String> statements = splitQuery(sql, driver.mars());
-                query = statements.stream().map(str -> loadStatement(str)).collect(Collectors.toList());
+                query = new MultiQuery();
+                for(String str : statements) {
+                    Query q = loadStatement(str);
+                    query.add(q);
+                }
                 queries.put(name, query);
                 return query;
             } catch (Exception ex) {
