@@ -6,16 +6,14 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
-import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class QueryCache {
 
     private String queryFolder = "queries";
-    private final Map<String, List<String>> queries = new ConcurrentHashMap<>();
+    private final Map<String, List<Query>> queries = new ConcurrentHashMap<>();
 
     private final DbDriver driver;
 
@@ -23,8 +21,8 @@ public class QueryCache {
         this.driver = driver;
     }
 
-    public List<String> loadQuery(String name) {
-        List<String> query = queries.get(name);
+    public List<Query> loadQuery(String name) {
+        List<Query> query = queries.get(name);
         if (query != null) {
             return query;
         }
@@ -35,7 +33,8 @@ public class QueryCache {
                     throw new InvalidParameterException("Query not found: " + path);
                 }
                 String sql = IOUtils.toString(stream, "UTF-8");
-                query = splitQuery(sql, driver.mars());
+                List<String> statements = splitQuery(sql, driver.mars());
+                query = statements.stream().map(str -> loadStatement(str)).collect(Collectors.toList());
                 queries.put(name, query);
                 return query;
             } catch (Exception ex) {
@@ -112,7 +111,7 @@ public class QueryCache {
      */
     public static List<String> splitQuery(String sql, boolean mars) {
         if (mars) {
-            return Arrays.asList(new String[]{sql});
+            return Arrays.asList(sql);
         }
         return splitQuery(sql);
     }

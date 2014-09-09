@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.List;
 
 public class DatasetTest {
     @Test
@@ -41,9 +42,10 @@ public class DatasetTest {
             custTable.persist(con, new Customer(2, "bob"));
 
             // Select from tables
+            QueryCache cache = new QueryCache(driver);
+            List<Query> query = cache.loadQuery("GetOrdersByCustomer");
+            Assert.assertNotNull(query);
             /*
-            QueryCache cache = new QueryCache();
-            String selectQuery = cache.loadQuery("GetOrdersByCustomer");
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.setObject(1, 1);
                 stmt.setObject(2, 1);
