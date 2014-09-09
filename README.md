@@ -8,14 +8,14 @@ Done
 ----
 * Simple loading and persistence test
 * Initial stab at DataSet API 
+* Initial Persistor implementation
+* Optimistic concurrency version field
 
 
 TODO
 ----
 * Postgres, Oracle, MS-SQL
 * POJO codegen
-* Persistor
-* Optimistic concurrency fields
 * Fluent DataSet query language
 * Persistence ordering and/or deferred constraints
 * Stored procedure support
