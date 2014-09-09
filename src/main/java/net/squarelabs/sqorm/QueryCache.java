@@ -6,6 +6,9 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -19,6 +22,25 @@ public class QueryCache {
 
     public QueryCache(DbDriver driver) {
         this.driver = driver;
+    }
+
+    public PreparedStatement prepareStatement(Connection con, Query query, Map<String,Object> parms)
+            throws SQLException {
+        PreparedStatement stmt = con.prepareStatement(query.getSql());
+        try {
+            int i = 1;
+            for(String parmName : query.getParameters()) {
+                if(!parms.containsKey(parmName)) {
+                    throw new RuntimeException("Value not specified for parameter: " + parmName);
+                }
+                Object val = parms.get(parmName);
+                stmt.setObject(i, val);
+            }
+        } catch (Exception ex) {
+            stmt.close();
+            throw ex;
+        }
+        return stmt;
     }
 
     public List<Query> loadQuery(String name) {
