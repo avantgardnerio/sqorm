@@ -19,6 +19,8 @@ Features
 * POJOs can be generated automatically from your database schema
 * No "leaky" abstractions (1:1 POJO mapping, no library-level caching)
 * Works in parallel with standard JDBC, you can keep your own connection pool and run your own statements
+* Named parameter support
+* Abstraction between databases
 
 
 Design Trade-offs
