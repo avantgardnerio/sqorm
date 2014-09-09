@@ -10,17 +10,16 @@ Done
 * Initial stab at DataSet API 
 * Initial Persistor implementation
 * Optimistic concurrency version field
+* Basic updates working
+* Optimistic concurrency fields
 
 In Progress
 -----------
-* Functional upsert
-* Update queries
-* Dirty record tracking
-* Working concurrency fields
-* Persistence ordering and/or deferred constraints
 
 TODO
 ----
+* Persistence ordering and/or deferred constraints
+* Dirty record tracking
 * Postgres, Oracle, MS-SQL
 * POJO codegen
 * Fluent DataSet query language

@@ -76,7 +76,7 @@ public class TableSchema {
                 Object val = col.get(record);
                 stmt.setObject(idx++, val);
             }
-            for(ColumnSchema col : idColumns) {
+            for (ColumnSchema col : idColumns) {
                 Object val = col.get(record);
                 stmt.setObject(idx++, val);
             }
@@ -109,7 +109,7 @@ public class TableSchema {
     private static SortedMap<String, ColumnSchema> findUpdateCols(Map<String, ColumnSchema> columns,
                                                                   List<ColumnSchema> idColumns) {
         SortedMap<String, ColumnSchema> updateCols = new TreeMap<>(columns);
-        idColumns.forEach(col -> updateCols.remove(col));
+        idColumns.forEach(col -> updateCols.remove(col.getName()));
         return updateCols;
     }
 
