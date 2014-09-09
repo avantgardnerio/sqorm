@@ -4,6 +4,7 @@ import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 import net.squarelabs.sqorm.driver.DbDriver;
 import org.apache.commons.lang.StringUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -53,6 +54,7 @@ public class TableSchema {
         // Collect accessors
         Map<String, Method> getters = new HashMap<>();
         Map<String, Method> setters = new HashMap<>();
+        Map<String, Integer> pkFields = new HashMap<>();
         for (Method method : clazz.getMethods()) {
             Column ano = method.getAnnotation(Column.class);
             if (ano == null) {
@@ -64,6 +66,9 @@ public class TableSchema {
             } else {
                 getters.put(colName, method);
             }
+            if(ano.pkOrdinal() > 0) {
+                pkFields.put(colName, ano.pkOrdinal());
+            }
         }
 
         // Translate to columns
@@ -72,10 +77,15 @@ public class TableSchema {
             String colName = entry.getKey();
             Method getter = entry.getValue();
             Method setter = setters.get(colName);
-            ColumnSchema col = new ColumnSchema(colName, getter, setter);
+            Integer pkOrdinal = pkFields.get(colName);
+            ColumnSchema col = new ColumnSchema(colName, getter, setter, pkOrdinal);
             columns.put(colName, col);
         }
         return columns;
+    }
+
+    public Object persist(Connection con, Object record) {
+        throw new NotImplementedException();
     }
 
     public void insert(Connection con, Object record) {
