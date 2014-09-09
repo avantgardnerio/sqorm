@@ -16,7 +16,6 @@ In Progress
 * Functional upsert
 * Update queries
 * Dirty record tracking
-* Switch Dataset to use Persistor
 * Working concurrency fields
 * Persistence ordering and/or deferred constraints
 

@@ -36,8 +36,8 @@ public class DatasetTest {
 
             // Add records
             TableSchema custTable = db.ensureTable(Customer.class);
-            custTable.insert(con, new Customer(1, "alice"));
-            custTable.insert(con, new Customer(2, "bob"));
+            custTable.persist(con, new Customer(1, "alice"));
+            custTable.persist(con, new Customer(2, "bob"));
 
             // Select from tables
             String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
@@ -49,7 +49,9 @@ public class DatasetTest {
                 Assert.assertEquals("All records iterable", 2, ds.ensureRecordset(Customer.class).size());
 
                 ds.attach(new Customer(3, "Charlie"));
-                ds.commit(con);
+                try(Persistor per = new Persistor(db, con)) {
+                    ds.commit(per);
+                }
             }
         }
     }

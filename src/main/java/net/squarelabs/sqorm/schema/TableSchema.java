@@ -148,9 +148,7 @@ public class TableSchema {
             } else {
                 getters.put(colName, method);
             }
-            if(ano.pkOrdinal() > 0) {
-                pkFields.put(colName, ano.pkOrdinal());
-            }
+            pkFields.put(colName, ano.pkOrdinal());
             if(ano.isVersion()) {
                 versionCol = colName;
             }
@@ -162,7 +160,7 @@ public class TableSchema {
             String colName = entry.getKey();
             Method getter = entry.getValue();
             Method setter = setters.get(colName);
-            Integer pkOrdinal = pkFields.get(colName);
+            int pkOrdinal = pkFields.get(colName);
             boolean isVersion = StringUtils.equals(colName, versionCol);
             ColumnSchema col = new ColumnSchema(colName, getter, setter, pkOrdinal, isVersion);
             columns.put(colName, col);

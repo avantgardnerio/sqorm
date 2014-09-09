@@ -1,10 +1,9 @@
 package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.Cursor;
+import net.squarelabs.sqorm.Persistor;
 import net.squarelabs.sqorm.schema.DbSchema;
-import net.squarelabs.sqorm.schema.TableSchema;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,22 +17,11 @@ public class Dataset {
         this.db = db;
     }
 
-    public void commit(Connection con) throws SQLException {
-        boolean autoCommit = con.getAutoCommit();
-        con.setAutoCommit(false);
-        try {
-            for(Recordset rs : recordsets.values()) {
-                Class<?> clazz = rs.recordClass();
-                TableSchema table = db.ensureTable(clazz);
-                for(Object record : rs) {
-                    table.insert(con, record); // TODO: Upsert
-                }
+    public void commit(Persistor persistor) throws SQLException {
+        for(Recordset rs : recordsets.values()) {
+            for(Object record : rs) {
+                persistor.persist(record);
             }
-        } catch (Exception ex) {
-            con.rollback();
-            throw ex;
-        } finally {
-            con.setAutoCommit(autoCommit);
         }
     }
 
