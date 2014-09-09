@@ -4,11 +4,10 @@ import net.squarelabs.sqorm.schema.ColumnSchema;
 import net.squarelabs.sqorm.schema.DbSchema;
 import net.squarelabs.sqorm.schema.TableSchema;
 
-import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.Iterator;
 
-public class SqormCursor<T> implements Iterator<T> {
+public class SqormCursor implements Iterator<Object> {
 
     private DbSchema db;
     private ResultSet resultSet;
@@ -21,7 +20,7 @@ public class SqormCursor<T> implements Iterator<T> {
     }
 
     @Override
-    public T next() {
+    public Object next() {
         try {
             if (!resultSet.next()) {
                 return null;
@@ -37,7 +36,7 @@ public class SqormCursor<T> implements Iterator<T> {
                 ColumnSchema col = table.getColumn(colName);
                 col.set(record, val);
             }
-            return (T) record;
+            return record;
         } catch (Exception ex) {
             throw new RuntimeException("Error during cursor iteration!", ex);
         }
