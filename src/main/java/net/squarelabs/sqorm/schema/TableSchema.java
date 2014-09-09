@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class TableSchema {
 
@@ -19,9 +20,11 @@ public class TableSchema {
     // Reflection cache
     private final Map<String, ColumnSchema> columns;
     private final ColumnSchema versionCol;
+    private final List<ColumnSchema> idColumns;
 
     // Cached query syntax
     private final String insertQuery;
+    private final String updateQuery;
 
     public TableSchema(Class<?> clazz, DbDriver driver) {
         Table tableAno = clazz.getAnnotation(Table.class);
@@ -33,9 +36,11 @@ public class TableSchema {
         // Collect accessors
         columns = parseAnnotations(clazz);
         versionCol = findVersionCol(columns);
+        idColumns = findIdCols(columns);
 
         // Write queries
-        insertQuery = writeInsertQuery(columns, driver);
+        insertQuery = writeInsertQuery(columns, driver, tableName);
+        updateQuery = writeUpdateQuery(columns, driver, tableName, idColumns);
     }
 
     public ColumnSchema getColumn(String name) {
@@ -51,7 +56,50 @@ public class TableSchema {
         versionCol.set(record, val);
     }
 
-    private ColumnSchema findVersionCol(Map<String, ColumnSchema> columns) {
+    public void persist(Connection con, Object record) {
+        int version = getVersion(record);
+        if(version == 0) {
+            setVersion(record, 1);
+            insert(con, record);
+        } else {
+            setVersion(record, version+1);
+            update(con, record);
+        }
+    }
+
+    public void update(Connection con, Object record) {
+        try(PreparedStatement stmt = con.prepareStatement( updateQuery )) {
+            throw new NotImplementedException();
+        } catch (Exception ex) {
+            throw new RuntimeException("Error updating record!", ex);
+        }
+    }
+
+    public void insert(Connection con, Object record) {
+        try (PreparedStatement stmt = con.prepareStatement(insertQuery)) {
+            int i = 1;
+            for (Map.Entry<String, ColumnSchema> entry : columns.entrySet()) {
+                ColumnSchema col = entry.getValue();
+                Object val = col.get(record);
+                stmt.setObject(i++, val);
+            }
+            int rowCount = stmt.executeUpdate();
+            if (rowCount != 1) {
+                throw new Exception("Insert failed!");
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Error inserting record!", ex);
+        }
+    }
+
+    private static List<ColumnSchema> findIdCols(Map<String, ColumnSchema> columns) {
+        List<ColumnSchema> idColumns = columns.values().stream()
+                .filter(col -> col.getPkOrdinal() >= 0).collect(Collectors.toList());
+        idColumns.sort((ColumnSchema a, ColumnSchema b) -> a.getPkOrdinal() - b.getPkOrdinal());
+        return idColumns;
+    }
+
+    private static ColumnSchema findVersionCol(Map<String, ColumnSchema> columns) {
         for(ColumnSchema col : columns.values()) {
             if(col.isVersion()) {
                 return col;
@@ -60,7 +108,20 @@ public class TableSchema {
         return null;
     }
 
-    private String writeInsertQuery(Map<String, ColumnSchema> columns, DbDriver driver) {
+    private static String writeUpdateQuery(Map<String, ColumnSchema> columns,
+                                           DbDriver driver, String tableName, List<ColumnSchema> idColumns) {
+        Map<String, ColumnSchema> updateCols = new HashMap<>(columns);
+        idColumns.forEach(col -> updateCols.remove(col));
+        String updateClause = StringUtils.join(updateCols.keySet(), driver.ee() + "=?,\n" + driver.se());
+        updateClause = driver.se() + updateClause + driver.ee() + "=?\n";
+        String whereClause = StringUtils.join(idColumns, driver.ee() + " and " + driver.se());
+        whereClause = driver.se() + whereClause + driver.ee();
+        String sql = String.format( "update %s%s%s set %s where %s",
+                driver.se(), tableName, driver.ee(), updateClause, whereClause );
+        return sql;
+    }
+
+    private static String writeInsertQuery(Map<String, ColumnSchema> columns, DbDriver driver, String tableName) {
         String[] values = StringUtils.repeat("?", columns.size()).split("");
         String valueClause = StringUtils.join(values, ",");
         String delim = driver.ee() + "," + driver.se();
@@ -70,7 +131,7 @@ public class TableSchema {
         return sql;
     }
 
-    private Map<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
+    private static Map<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
         // Collect accessors
         Map<String, Method> getters = new HashMap<>();
         Map<String, Method> setters = new HashMap<>();
@@ -109,35 +170,4 @@ public class TableSchema {
         return columns;
     }
 
-    public void persist(Connection con, Object record) {
-        int version = getVersion(record);
-        if(version == 0) {
-            setVersion(record, 1);
-            insert(con, record);
-        } else {
-            setVersion(record, version+1);
-            update(con, record);
-        }
-    }
-
-    public void update(Connection con, Object record) {
-        throw new NotImplementedException();
-    }
-
-    public void insert(Connection con, Object record) {
-        try (PreparedStatement stmt = con.prepareStatement(insertQuery)) {
-            int i = 1;
-            for (Map.Entry<String, ColumnSchema> entry : columns.entrySet()) {
-                ColumnSchema col = entry.getValue();
-                Object val = col.get(record);
-                stmt.setObject(i++, val);
-            }
-            int rowCount = stmt.executeUpdate();
-            if (rowCount != 1) {
-                throw new Exception("Insert failed!");
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error inserting record!", ex);
-        }
-    }
 }
