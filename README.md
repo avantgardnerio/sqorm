@@ -7,6 +7,7 @@ Static Query ORM Library in Java
 Done
 ----
 * Simple loading and persistence test
+* Initial stab at DataSet API 
 
 
 TODO
@@ -14,7 +15,6 @@ TODO
 * Postgres, Oracle, MS-SQL
 * POJO codegen
 * Persistor
-* DataSet API
 * Optimistic concurrency fields
 * Fluent DataSet query language
 * Persistence ordering and/or deferred constraints

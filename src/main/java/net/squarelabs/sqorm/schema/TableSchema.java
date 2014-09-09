@@ -51,8 +51,8 @@ public class TableSchema {
 
     private Map<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
         // Collect accessors
-        Map<String, Method> getters = new ConcurrentHashMap<>();
-        Map<String, Method> setters = new ConcurrentHashMap<>();
+        Map<String, Method> getters = new HashMap<>();
+        Map<String, Method> setters = new HashMap<>();
         for (Method method : clazz.getMethods()) {
             Column ano = method.getAnnotation(Column.class);
             if (ano == null) {
