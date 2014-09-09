@@ -15,11 +15,10 @@ public class Persistor {
         this.con = con;
     }
 
-    public Object persist(Object record) {
+    public void persist(Object record) {
         Class<?> clazz = record.getClass();
         TableSchema table = db.ensureTable(clazz);
-        Object res = table.persist(con, record);
-        return res;
+        table.persist(con, record);
     }
 
 }

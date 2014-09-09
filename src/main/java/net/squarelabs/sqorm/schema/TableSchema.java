@@ -18,6 +18,7 @@ public class TableSchema {
 
     // Reflection cache
     private final Map<String, ColumnSchema> columns;
+    private final ColumnSchema versionCol;
 
     // Cached query syntax
     private final String insertQuery;
@@ -31,6 +32,7 @@ public class TableSchema {
 
         // Collect accessors
         columns = parseAnnotations(clazz);
+        versionCol = findVersionCol(columns);
 
         // Write queries
         insertQuery = writeInsertQuery(columns, driver);
@@ -38,6 +40,24 @@ public class TableSchema {
 
     public ColumnSchema getColumn(String name) {
         return columns.get(name);
+    }
+
+    public int getVersion(Object record) {
+        int version = (int)versionCol.get(record);
+        return version;
+    }
+
+    public void setVersion(Object record, int val) {
+        versionCol.set(record, val);
+    }
+
+    private ColumnSchema findVersionCol(Map<String, ColumnSchema> columns) {
+        for(ColumnSchema col : columns.values()) {
+            if(col.isVersion()) {
+                return col;
+            }
+        }
+        return null;
     }
 
     private String writeInsertQuery(Map<String, ColumnSchema> columns, DbDriver driver) {
@@ -55,6 +75,7 @@ public class TableSchema {
         Map<String, Method> getters = new HashMap<>();
         Map<String, Method> setters = new HashMap<>();
         Map<String, Integer> pkFields = new HashMap<>();
+        String versionCol = null;
         for (Method method : clazz.getMethods()) {
             Column ano = method.getAnnotation(Column.class);
             if (ano == null) {
@@ -69,6 +90,9 @@ public class TableSchema {
             if(ano.pkOrdinal() > 0) {
                 pkFields.put(colName, ano.pkOrdinal());
             }
+            if(ano.isVersion()) {
+                versionCol = colName;
+            }
         }
 
         // Translate to columns
@@ -78,13 +102,25 @@ public class TableSchema {
             Method getter = entry.getValue();
             Method setter = setters.get(colName);
             Integer pkOrdinal = pkFields.get(colName);
-            ColumnSchema col = new ColumnSchema(colName, getter, setter, pkOrdinal);
+            boolean isVersion = StringUtils.equals(colName, versionCol);
+            ColumnSchema col = new ColumnSchema(colName, getter, setter, pkOrdinal, isVersion);
             columns.put(colName, col);
         }
         return columns;
     }
 
-    public Object persist(Connection con, Object record) {
+    public void persist(Connection con, Object record) {
+        int version = getVersion(record);
+        if(version == 0) {
+            setVersion(record, 1);
+            insert(con, record);
+        } else {
+            setVersion(record, version+1);
+            update(con, record);
+        }
+    }
+
+    public void update(Connection con, Object record) {
         throw new NotImplementedException();
     }
 

@@ -9,11 +9,18 @@ public class ColumnSchema {
     private final Method setter;
     private final Integer pkOrdinal;
 
-    public ColumnSchema(String name, Method getter, Method setter, Integer pkOrdinal) {
+    private final boolean isVersion;
+
+    public ColumnSchema(String name, Method getter, Method setter, Integer pkOrdinal, boolean isVersion) {
         this.name = name;
         this.getter = getter;
         this.setter = setter;
         this.pkOrdinal = pkOrdinal;
+        this.isVersion = isVersion;
+    }
+
+    public boolean isVersion() {
+        return isVersion;
     }
 
     public String getName() {
