@@ -41,7 +41,8 @@ public class DatasetTest {
             custTable.persist(con, new Customer(2, "bob"));
 
             // Select from tables
-            String selectQuery = "select 'net.squarelabs.model.Customer' as classpath, customer.* from customer;";
+            QueryCache cache = new QueryCache();
+            String selectQuery = cache.loadQuery("GetOrdersByCustomer");
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.executeQuery();
                 Cursor cur = new Cursor(db, stmt);
