@@ -7,7 +7,7 @@ import net.squarelabs.sqorm.schema.TableSchema;
 import java.sql.*;
 import java.util.Iterator;
 
-public class SqormCursor implements Iterator<Object> {
+public class SqormCursor implements Iterable<Object>, Iterator<Object> {
 
     private DbSchema db;
     private ResultSet resultSet;
@@ -51,4 +51,8 @@ public class SqormCursor implements Iterator<Object> {
         }
     }
 
+    @Override
+    public Iterator<Object> iterator() {
+        return this;
+    }
 }
