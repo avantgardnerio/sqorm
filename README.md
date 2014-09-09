@@ -15,6 +15,8 @@ Done
 
 In Progress
 -----------
+* Static query parsing and translation
+* Named parameter support
 
 TODO
 ----
@@ -24,8 +26,6 @@ TODO
 * POJO codegen
 * Fluent DataSet query language
 * Stored procedure support
-* Static query parsing and translation
-* Named parameter support
 * Blob API
 * In-memory hash-map indexing
 * Ordered indexing
