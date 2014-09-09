@@ -1,6 +1,6 @@
 package net.squarelabs.sqorm.dataset;
 
-import net.squarelabs.sqorm.SqormCursor;
+import net.squarelabs.sqorm.Cursor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +21,7 @@ public class Dataset {
         }
     }
 
-    public void fill(SqormCursor cursor) {
+    public void fill(Cursor cursor) {
         for(Object record : cursor) {
             Class<?> clazz = record.getClass();
             Recordset rs = ensureRecordset(clazz);

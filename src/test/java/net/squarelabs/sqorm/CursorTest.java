@@ -11,9 +11,8 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 
-public class SqormCursorTest {
+public class CursorTest {
 
     @Test
     public void canIterate() throws Exception {
@@ -47,7 +46,7 @@ public class SqormCursorTest {
             String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.executeQuery();
-                SqormCursor cur = new SqormCursor(db, stmt);
+                Cursor cur = new Cursor(db, stmt);
                 while(cur.hasNext()) {
                     Object record = cur.next();
                     if(record == null) {

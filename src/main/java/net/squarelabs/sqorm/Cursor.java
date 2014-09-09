@@ -7,13 +7,13 @@ import net.squarelabs.sqorm.schema.TableSchema;
 import java.sql.*;
 import java.util.Iterator;
 
-public class SqormCursor implements Iterable<Object>, Iterator<Object> {
+public class Cursor implements Iterable<Object>, Iterator<Object> {
 
     private DbSchema db;
     private ResultSet resultSet;
     private ResultSetMetaData metaData;
 
-    public SqormCursor(DbSchema db, PreparedStatement stmt) throws SQLException {
+    public Cursor(DbSchema db, PreparedStatement stmt) throws SQLException {
         this.db = db;
         this.resultSet = stmt.getResultSet();
         this.metaData = resultSet.getMetaData();

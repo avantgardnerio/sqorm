@@ -43,7 +43,7 @@ public class DatasetTest {
             String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.executeQuery();
-                SqormCursor cur = new SqormCursor(db, stmt);
+                Cursor cur = new Cursor(db, stmt);
                 Dataset ds = new Dataset();
                 ds.fill(cur);
                 Assert.assertEquals("All records iterable", 2, ds.ensureRecordset(Customer.class).size());
