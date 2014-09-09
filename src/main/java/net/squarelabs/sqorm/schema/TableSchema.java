@@ -18,7 +18,8 @@ public class TableSchema {
     private final String tableName;
 
     // Reflection cache
-    private final Map<String, ColumnSchema> columns;
+    private final SortedMap<String, ColumnSchema> columns;
+    private final SortedMap<String, ColumnSchema> updateColumns;
     private final ColumnSchema versionCol;
     private final List<ColumnSchema> idColumns;
 
@@ -37,10 +38,11 @@ public class TableSchema {
         columns = parseAnnotations(clazz);
         versionCol = findVersionCol(columns);
         idColumns = findIdCols(columns);
+        updateColumns = findUpdateCols(columns, idColumns);
 
         // Write queries
         insertQuery = writeInsertQuery(columns, driver, tableName);
-        updateQuery = writeUpdateQuery(columns, driver, tableName, idColumns);
+        updateQuery = writeUpdateQuery(updateColumns, driver, tableName, idColumns);
     }
 
     public ColumnSchema getColumn(String name) {
@@ -48,7 +50,7 @@ public class TableSchema {
     }
 
     public int getVersion(Object record) {
-        int version = (int)versionCol.get(record);
+        int version = (int) versionCol.get(record);
         return version;
     }
 
@@ -58,18 +60,30 @@ public class TableSchema {
 
     public void persist(Connection con, Object record) {
         int version = getVersion(record);
-        if(version == 0) {
+        if (version == 0) {
             setVersion(record, 1);
             insert(con, record);
         } else {
-            setVersion(record, version+1);
+            setVersion(record, version + 1);
             update(con, record);
         }
     }
 
     public void update(Connection con, Object record) {
-        try(PreparedStatement stmt = con.prepareStatement( updateQuery )) {
-            throw new NotImplementedException();
+        try (PreparedStatement stmt = con.prepareStatement(updateQuery)) {
+            int idx = 1;
+            for (ColumnSchema col : updateColumns.values()) {
+                Object val = col.get(record);
+                stmt.setObject(idx++, val);
+            }
+            for(ColumnSchema col : idColumns) {
+                Object val = col.get(record);
+                stmt.setObject(idx++, val);
+            }
+            int rowCount = stmt.executeUpdate();
+            if (rowCount != 1) {
+                throw new Exception("Update failed!");
+            }
         } catch (Exception ex) {
             throw new RuntimeException("Error updating record!", ex);
         }
@@ -92,6 +106,13 @@ public class TableSchema {
         }
     }
 
+    private static SortedMap<String, ColumnSchema> findUpdateCols(Map<String, ColumnSchema> columns,
+                                                                  List<ColumnSchema> idColumns) {
+        SortedMap<String, ColumnSchema> updateCols = new TreeMap<>(columns);
+        idColumns.forEach(col -> updateCols.remove(col));
+        return updateCols;
+    }
+
     private static List<ColumnSchema> findIdCols(Map<String, ColumnSchema> columns) {
         List<ColumnSchema> idColumns = columns.values().stream()
                 .filter(col -> col.getPkOrdinal() >= 0).collect(Collectors.toList());
@@ -100,25 +121,23 @@ public class TableSchema {
     }
 
     private static ColumnSchema findVersionCol(Map<String, ColumnSchema> columns) {
-        for(ColumnSchema col : columns.values()) {
-            if(col.isVersion()) {
+        for (ColumnSchema col : columns.values()) {
+            if (col.isVersion()) {
                 return col;
             }
         }
         return null;
     }
 
-    private static String writeUpdateQuery(Map<String, ColumnSchema> columns,
+    private static String writeUpdateQuery(SortedMap<String, ColumnSchema> updateCols,
                                            DbDriver driver, String tableName, List<ColumnSchema> idColumns) {
-        Map<String, ColumnSchema> updateCols = new HashMap<>(columns);
-        idColumns.forEach(col -> updateCols.remove(col));
         List<String> idNames = idColumns.stream().map(col -> col.getName()).collect(Collectors.toList());
         String updateClause = StringUtils.join(updateCols.keySet(), driver.ee() + "=?,\n" + driver.se());
         updateClause = driver.se() + updateClause + driver.ee() + "=?\n";
         String whereClause = StringUtils.join(idNames, driver.ee() + "=? and " + driver.se());
         whereClause = driver.se() + whereClause + driver.ee() + "=?";
-        String sql = String.format( "update %s%s%s set %s where %s",
-                driver.se(), tableName, driver.ee(), updateClause, whereClause );
+        String sql = String.format("update %s%s%s set %s where %s",
+                driver.se(), tableName, driver.ee(), updateClause, whereClause);
         return sql;
     }
 
@@ -132,7 +151,7 @@ public class TableSchema {
         return sql;
     }
 
-    private static Map<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
+    private static SortedMap<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
         // Collect accessors
         Map<String, Method> getters = new HashMap<>();
         Map<String, Method> setters = new HashMap<>();
@@ -150,14 +169,14 @@ public class TableSchema {
                 getters.put(colName, method);
             }
             pkFields.put(colName, ano.pkOrdinal());
-            if(ano.isVersion()) {
+            if (ano.isVersion()) {
                 versionCol = colName;
             }
         }
 
         // Translate to columns
-        Map<String, ColumnSchema> columns = new ConcurrentHashMap<>();
-        for(Map.Entry<String, Method> entry : getters.entrySet()) {
+        SortedMap<String, ColumnSchema> columns = new TreeMap<>();
+        for (Map.Entry<String, Method> entry : getters.entrySet()) {
             String colName = entry.getKey();
             Method getter = entry.getValue();
             Method setter = setters.get(colName);
