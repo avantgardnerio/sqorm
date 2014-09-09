@@ -18,4 +18,9 @@ public interface DbDriver {
      * @return End escape char (e.g. "]", "`", "'")
      */
     public String ee();
+
+    /**
+     * @return true if DB supports Multiple Active Result Sets
+     */
+    public boolean mars();
 }

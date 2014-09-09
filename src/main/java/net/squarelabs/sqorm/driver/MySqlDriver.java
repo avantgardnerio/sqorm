@@ -42,4 +42,9 @@ public class MySqlDriver implements DbDriver {
     public String ee() {
         return "`";
     }
+
+    @Override
+    public boolean mars() {
+        return true;
+    }
 }
