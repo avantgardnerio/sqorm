@@ -23,6 +23,11 @@ public class PostGresDriver implements DbDriver {
     }
 
     @Override
+    public String name() {
+        return "postgres";
+    }
+
+    @Override
     public String se() {
         return "\"";
     }

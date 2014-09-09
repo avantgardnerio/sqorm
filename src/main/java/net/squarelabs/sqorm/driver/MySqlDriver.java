@@ -34,6 +34,11 @@ public class MySqlDriver implements DbDriver {
     }
 
     @Override
+    public String name() {
+        return "mysql";
+    }
+
+    @Override
     public String se() {
         return "`";
     }

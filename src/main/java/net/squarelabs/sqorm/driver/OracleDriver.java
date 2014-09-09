@@ -23,6 +23,11 @@ public class OracleDriver implements DbDriver {
     }
 
     @Override
+    public String name() {
+        return "oracle";
+    }
+
+    @Override
     public String se() {
         return "\"";
     }

@@ -31,7 +31,7 @@ public class DatasetTest {
             // Rebuild DB
             Flyway flyway = new Flyway();
             flyway.setDataSource(pool);
-            flyway.setLocations("ddl/mysql"); // TODO: Parameterize
+            flyway.setLocations("ddl/" + driver.name());
             flyway.migrate();
             DbSchema db = new DbSchema(driver);
 

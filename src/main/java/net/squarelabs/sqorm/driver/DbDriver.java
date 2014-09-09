@@ -9,6 +9,8 @@ public interface DbDriver {
 
     public void dropTables(Connection con) throws SQLException;
 
+    public String name();
+
     /**
      * @return Start escape char (e.g. "[", "`", "'")
      */

@@ -23,6 +23,11 @@ public class MsSqlDriver implements DbDriver {
     }
 
     @Override
+    public String name() {
+        return "mssql";
+    }
+
+    @Override
     public String se() {
         return "[";
     }
