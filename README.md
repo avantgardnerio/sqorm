@@ -21,6 +21,9 @@ Features
 * Works in parallel with standard JDBC, you can keep your own connection pool and run your own statements
 * Named parameter support
 * Abstraction between databases
+* Support for advanced concepts like database-side pagination
+* Fluent query language for objects in memory
+* Support for Java 8 Streams APIs
 
 
 Design Trade-offs
