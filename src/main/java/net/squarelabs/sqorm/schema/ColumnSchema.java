@@ -35,7 +35,7 @@ public class ColumnSchema {
         try {
             return getter.invoke(record);
         } catch (Exception ex) {
-            throw new RuntimeException("Error setting record value!", ex);
+            throw new RuntimeException("Error getting record value!", ex);
         }
     }
     public void set(Object record, Object val) {
