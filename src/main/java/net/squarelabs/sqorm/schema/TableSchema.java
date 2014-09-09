@@ -112,10 +112,11 @@ public class TableSchema {
                                            DbDriver driver, String tableName, List<ColumnSchema> idColumns) {
         Map<String, ColumnSchema> updateCols = new HashMap<>(columns);
         idColumns.forEach(col -> updateCols.remove(col));
+        List<String> idNames = idColumns.stream().map(col -> col.getName()).collect(Collectors.toList());
         String updateClause = StringUtils.join(updateCols.keySet(), driver.ee() + "=?,\n" + driver.se());
         updateClause = driver.se() + updateClause + driver.ee() + "=?\n";
-        String whereClause = StringUtils.join(idColumns, driver.ee() + " and " + driver.se());
-        whereClause = driver.se() + whereClause + driver.ee();
+        String whereClause = StringUtils.join(idNames, driver.ee() + "=? and " + driver.se());
+        whereClause = driver.se() + whereClause + driver.ee() + "=?";
         String sql = String.format( "update %s%s%s set %s where %s",
                 driver.se(), tableName, driver.ee(), updateClause, whereClause );
         return sql;
