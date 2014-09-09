@@ -14,12 +14,12 @@ public interface DbDriver {
     /**
      * @return Start escape char (e.g. "[", "`", "'")
      */
-    public String se();
+    public char se();
 
     /**
      * @return End escape char (e.g. "]", "`", "'")
      */
-    public String ee();
+    public char ee();
 
     /**
      * @return true if DB supports Multiple Active Result Sets

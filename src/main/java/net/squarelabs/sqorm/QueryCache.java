@@ -58,7 +58,7 @@ public class QueryCache {
                 List<String> statements = splitQuery(sql, driver.mars());
                 query = new MultiQuery();
                 for(String str : statements) {
-                    Query q = loadStatement(str);
+                    Query q = loadStatement(str, driver);
                     query.add(q);
                 }
                 queries.put(name, query);
@@ -83,7 +83,7 @@ public class QueryCache {
      * @param sql The SQL statement to parse
      * @return A Query object containing the modified SQL and a list of parameters
      */
-    public static Query loadStatement(String sql) {
+    public static Query loadStatement(String sql, DbDriver driver) {
         if(!sql.endsWith(";")) {
             sql += ";";
         }
@@ -120,6 +120,10 @@ public class QueryCache {
                     curTok = null;
                     tokenStack.pop();
                 }
+            } else if(chr == '[') {
+                chr = driver.se();
+            } else if(chr == ']') {
+                chr = driver.ee();
             }
 
             // Build string

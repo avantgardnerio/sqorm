@@ -28,13 +28,13 @@ public class PostGresDriver implements DbDriver {
     }
 
     @Override
-    public String se() {
-        return "\"";
+    public char se() {
+        return '\"';
     }
 
     @Override
-    public String ee() {
-        return "\"";
+    public char ee() {
+        return '\"';
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.squarelabs.sqorm;
 
+import net.squarelabs.sqorm.driver.MySqlDriver;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +14,7 @@ public class QueryCacheTest {
         String sql = "select * from customer where customer_id=@CustomerId and name=@CustomerName";
         String expectedSql = "select * from customer where customer_id=? and name=?;";
         String[] expectedParms = new String[] { "CustomerId", "CustomerName" };
-        Query actual = QueryCache.loadStatement(sql);
+        Query actual = QueryCache.loadStatement(sql, new MySqlDriver());
         Assert.assertEquals(expectedSql, actual.getSql());
         stringArrayEquals(expectedParms, actual.getParameters());
     }
