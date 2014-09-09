@@ -21,7 +21,7 @@ public class DatasetTest {
         pool.setDriverClassName("com.mysql.jdbc.Driver");
         pool.setUsername("sqorm");
         pool.setPassword("sqorm");
-        pool.setUrl("jdbc:mysql://127.0.0.1/sqorm");
+        pool.setUrl("jdbc:mysql://127.0.0.1/sqorm?allowMultiQueries=true");
 
         try(Connection con = pool.getConnection()) {
             // Clean DB
@@ -44,6 +44,9 @@ public class DatasetTest {
             QueryCache cache = new QueryCache();
             String selectQuery = cache.loadQuery("GetOrdersByCustomer");
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
+                stmt.setObject(1, 1);
+                stmt.setObject(2, 1);
+                stmt.setObject(3, 1);
                 stmt.executeQuery();
                 Cursor cur = new Cursor(db, stmt);
                 Dataset ds = new Dataset(db);
