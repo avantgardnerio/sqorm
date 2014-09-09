@@ -1,9 +1,9 @@
 sqorm
 =====
 
-*/skwôrm/* - Static Query ORM Library in Java
+**/skwôrm/** - Static Query ORM Library in Java
 
-*Real ORM*, *real SQL*, *no lazy loading*.
+**Real ORM**, **real SQL**, **no lazy loading**.
 
 Features
 --------
