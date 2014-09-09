@@ -44,9 +44,12 @@ public class DatasetTest {
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.executeQuery();
                 Cursor cur = new Cursor(db, stmt);
-                Dataset ds = new Dataset();
+                Dataset ds = new Dataset(db);
                 ds.fill(cur);
                 Assert.assertEquals("All records iterable", 2, ds.ensureRecordset(Customer.class).size());
+
+                ds.attach(new Customer(3, "Charlie"));
+                ds.commit(con);
             }
         }
     }

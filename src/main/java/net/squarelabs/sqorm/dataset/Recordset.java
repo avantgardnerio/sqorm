@@ -10,6 +10,10 @@ public class Recordset extends ArrayList<Object> {
         this.clazz = clazz;
     }
 
+    public Class<?> recordClass() {
+        return clazz;
+    }
+
     @Override
     public boolean add(Object record) throws UnsupportedOperationException {
         // TODO: Check for existing record with same PK, and remove it first!
