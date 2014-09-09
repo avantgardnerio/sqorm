@@ -3,8 +3,8 @@ sqorm
 
 /skwôrm/ - Static Query ORM Library in Java
 
-Features:
-
+Features
+--------
 * Write your own select queries in real SQL
 * Results are loaded into standard POJOs
 * Full graphs of POJOs are supported with .getChildren() and .getParent() accessors
