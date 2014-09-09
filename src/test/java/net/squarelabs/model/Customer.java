@@ -1,4 +1,4 @@
-package net.squarelabs.sqorm;
+package net.squarelabs.model;
 
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;

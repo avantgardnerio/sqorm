@@ -1,6 +1,7 @@
 package net.squarelabs.sqorm;
 
 import com.googlecode.flyway.core.Flyway;
+import net.squarelabs.model.Customer;
 import net.squarelabs.sqorm.dataset.Dataset;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
@@ -40,7 +41,7 @@ public class DatasetTest {
             custTable.persist(con, new Customer(2, "bob"));
 
             // Select from tables
-            String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
+            String selectQuery = "select 'net.squarelabs.model.Customer' as classpath, customer.* from customer;";
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.executeQuery();
                 Cursor cur = new Cursor(db, stmt);

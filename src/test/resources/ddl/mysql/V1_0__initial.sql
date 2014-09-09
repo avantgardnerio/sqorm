@@ -18,3 +18,12 @@ CREATE TABLE `orders` (
   PRIMARY KEY (`OrderId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- OrderDetails
+DROP TABLE IF EXISTS `OrderDetails`;
+CREATE TABLE `OrderDetails` (
+  `OrderDetailsId` int(11) NOT NULL,
+  `OrderId` int(11) NOT NULL,
+  `item_name` int(11) NOT NULL,
+  `version` int(11) NOT NULL,
+  PRIMARY KEY (`OrderId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
