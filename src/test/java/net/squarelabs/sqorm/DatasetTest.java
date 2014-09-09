@@ -13,7 +13,9 @@ import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatasetTest {
     @Test
@@ -43,13 +45,9 @@ public class DatasetTest {
 
             // Select from tables
             QueryCache cache = new QueryCache(driver);
-            List<Query> query = cache.loadQuery("GetOrdersByCustomer");
-            Assert.assertNotNull(query);
-            /*
-            try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
-                stmt.setObject(1, 1);
-                stmt.setObject(2, 1);
-                stmt.setObject(3, 1);
+            Map<String,Object> parms = new HashMap<>();
+            parms.put("CustomerId", 1);
+            try(PreparedStatement stmt = cache.prepareQuery(con, "GetOrdersByCustomer", parms)) {
                 stmt.executeQuery();
                 Cursor cur = new Cursor(db, stmt);
                 Dataset ds = new Dataset(db);
@@ -61,7 +59,6 @@ public class DatasetTest {
                     ds.commit(per);
                 }
             }
-            */
         }
     }
 

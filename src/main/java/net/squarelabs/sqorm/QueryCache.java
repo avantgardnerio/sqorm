@@ -24,6 +24,23 @@ public class QueryCache {
         this.driver = driver;
     }
 
+    public String getQueryFolder() {
+        return queryFolder;
+    }
+
+    public void setQueryFolder(String queryFolder) {
+        this.queryFolder = queryFolder;
+    }
+
+    /**
+     * Turns a Query into a PreparedStatement ready for execution (Remember to close the resulting statement!)
+     *
+     * @param con The connection on which to create the PreparedStatement
+     * @param query The Query that will be converted
+     * @param parms A map of named parameters and values to pass to the PreparedStatement
+     * @return A PreparedStatement object ready for execution against the DB
+     * @throws SQLException
+     */
     public PreparedStatement prepareStatement(Connection con, Query query, Map<String,Object> parms)
             throws SQLException {
         PreparedStatement stmt = con.prepareStatement(query.getSql());
@@ -43,7 +60,48 @@ public class QueryCache {
         return stmt;
     }
 
-    public List<Query> loadQuery(String name) {
+    /**
+     * Turns a MultiQuery into a MultiStatement, populating it with named parameter values from a map
+     *
+     * @param con The connection on which to create the PreparedStatement
+     * @param query The name of the query to load
+     * @param parms A map of named parameters and values to pass to the PreparedStatement
+     * @return A MultiStatement object ready for execution against the DB
+     * @throws SQLException
+     */
+    public MultiStatement prepareStatements(Connection con, MultiQuery query, Map<String,Object> parms)
+            throws SQLException {
+        PreparedStatement[] stmts = new PreparedStatement[query.size()];
+        for(int i = 0; i < stmts.length; i++) {
+            stmts[i] = prepareStatement(con, query.get(i), parms);
+        }
+        MultiStatement stmt = new MultiStatement(stmts);
+        return stmt;
+    }
+
+    /**
+     * Create a PreparedStatement from the resource file with the given name, and populate it with parameters
+     *
+     * @param con The connection on which to create the PreparedStatement
+     * @param name The name of the query to load
+     * @param parms A map of named parameters and values to pass to the PreparedStatement
+     * @return A MultiStatement object ready for execution against the DB
+     */
+    public MultiStatement prepareQuery(Connection con, String name, Map<String, Object> parms)
+            throws SQLException {
+        MultiQuery query = loadQuery(name);
+        MultiStatement stmt = prepareStatements(con, query, parms);
+        return stmt;
+    }
+
+    /**
+     * Load a query resource file, break it up into multiple parts if necessary, translate it to the syntax for the
+     * current database, and return it.
+     *
+     * @param name The name of the query to load
+     * @return A Query object ready to be given parameters and turned into one or more PreparedStatements
+     */
+    public MultiQuery loadQuery(String name) {
         MultiQuery query = queries.get(name);
         if (query != null) {
             return query;
@@ -67,14 +125,6 @@ public class QueryCache {
                 throw new RuntimeException("Error loading query!", ex);
             }
         }
-    }
-
-    public String getQueryFolder() {
-        return queryFolder;
-    }
-
-    public void setQueryFolder(String queryFolder) {
-        this.queryFolder = queryFolder;
     }
 
     /**
@@ -135,6 +185,7 @@ public class QueryCache {
 
     /**
      * Split SQL into multiple statements if the DB does not support mars
+     *
      * @param sql The SQL to split
      * @param mars A flag indicating if the DB supports mars
      * @return A list of individual SQL statements
