@@ -11,7 +11,6 @@ Done
 * Initial Persistor implementation
 * Optimistic concurrency version field
 * Basic updates working
-* Optimistic concurrency fields
 
 In Progress
 -----------
