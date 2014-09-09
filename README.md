@@ -16,6 +16,17 @@ Features
 * Database performance will never suffer from lots of auto-generated queries behind the scenes
 * Lifecycle of objects is explicitly controlled by the application
 * Support for: PostGreSQL, Oracle, MySQL, and MS-SQL
+* POJOs can be generated automatically from your database schema
+* No "leaky" abstractions (1:1 POJO mapping, no library-level caching)
+* Works in parallel with standard JDBC, you can keep your own connection pool and run your own statements
+
+
+Design Trade-offs
+-----------------
+* No lazy loading - if not explicitly loaded in SQL, children won't appear in child iterators
+* No impedance mapping - 1:1 POJO to table, 1:1 column to accessor
+* Caching is at application level - Loads are always done by queries, queries will always access the real DB
+* New library - small user base (though the concepts have been refined over 5 years)
 
 
 Done
