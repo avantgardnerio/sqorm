@@ -24,6 +24,7 @@ Features
 * Support for advanced concepts like database-side pagination
 * Fluent query language for objects in memory
 * Support for Java 8 Streams APIs
+* Cached reflection for optimum performance
 
 
 Design Trade-offs
