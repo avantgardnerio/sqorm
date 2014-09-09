@@ -17,13 +17,19 @@ public class MultiStatement implements PreparedStatement {
 
     private final PreparedStatement[] statements;
 
+    private int currentStmt = 0;
+
     public MultiStatement(PreparedStatement[] statements) {
         this.statements = statements;
     }
 
+    private PreparedStatement currentStatement() {
+        return statements[currentStmt];
+    }
+
     @Override
     public ResultSet executeQuery() throws SQLException {
-        throw new NotImplementedException();
+        return currentStatement().executeQuery();
     }
 
     @Override
