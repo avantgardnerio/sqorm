@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TableSchema {
 
@@ -34,6 +35,10 @@ public class TableSchema {
         insertQuery = writeInsertQuery(columns, driver);
     }
 
+    public ColumnSchema getColumn(String name) {
+        return columns.get(name);
+    }
+
     private String writeInsertQuery(Map<String, ColumnSchema> columns, DbDriver driver) {
         String[] values = StringUtils.repeat("?", columns.size()).split("");
         String valueClause = StringUtils.join(values, ",");
@@ -46,8 +51,8 @@ public class TableSchema {
 
     private Map<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
         // Collect accessors
-        Map<String, Method> getters = new HashMap<>();
-        Map<String, Method> setters = new HashMap<>();
+        Map<String, Method> getters = new ConcurrentHashMap<>();
+        Map<String, Method> setters = new ConcurrentHashMap<>();
         for (Method method : clazz.getMethods()) {
             Column ano = method.getAnnotation(Column.class);
             if (ano == null) {
@@ -62,7 +67,7 @@ public class TableSchema {
         }
 
         // Translate to columns
-        Map<String, ColumnSchema> columns = new HashMap<>();
+        Map<String, ColumnSchema> columns = new ConcurrentHashMap<>();
         for(Map.Entry<String, Method> entry : getters.entrySet()) {
             String colName = entry.getKey();
             Method getter = entry.getValue();

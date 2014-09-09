@@ -1,14 +1,21 @@
 package net.squarelabs.sqorm;
 
+import net.squarelabs.sqorm.schema.ColumnSchema;
+import net.squarelabs.sqorm.schema.DbSchema;
+import net.squarelabs.sqorm.schema.TableSchema;
+
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.Iterator;
 
 public class SqormCursor<T> implements Iterator<T> {
+
+    private DbSchema db;
     private ResultSet resultSet;
     private ResultSetMetaData metaData;
 
-    public SqormCursor(PreparedStatement stmt) throws SQLException {
+    public SqormCursor(DbSchema db, PreparedStatement stmt) throws SQLException {
+        this.db = db;
         this.resultSet = stmt.getResultSet();
         this.metaData = resultSet.getMetaData();
     }
@@ -21,13 +28,14 @@ public class SqormCursor<T> implements Iterator<T> {
             }
             String className = resultSet.getString(1);
             Class<?> clazz = Class.forName(className);
+            TableSchema table = db.ensureTable(clazz);
             Object record = clazz.newInstance();
             int colCount = metaData.getColumnCount();
             for (int colIndex = 2; colIndex <= colCount; colIndex++) {
-                String colName = metaData.getColumnName(colIndex);
                 Object val = resultSet.getObject(colIndex);
-                Method setter = clazz.getMethod(colName); // TODO: Cache reflection
-                setter.invoke(record, val);
+                String colName = metaData.getColumnName(colIndex);
+                ColumnSchema col = table.getColumn(colName);
+                col.set(record, val);
             }
             return (T) record;
         } catch (Exception ex) {

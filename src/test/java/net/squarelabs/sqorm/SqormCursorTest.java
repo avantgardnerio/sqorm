@@ -3,6 +3,7 @@ package net.squarelabs.sqorm;
 import com.googlecode.flyway.core.Flyway;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
+import net.squarelabs.sqorm.schema.DbSchema;
 import net.squarelabs.sqorm.schema.TableSchema;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
@@ -35,9 +36,10 @@ public class SqormCursorTest {
             flyway.setDataSource(ds);
             flyway.setLocations("ddl/mysql"); // TODO: Parameterize
             flyway.migrate();
+            DbSchema db = new DbSchema(driver);
 
             // Add records
-            TableSchema custTable = new TableSchema(Customer.class, driver);
+            TableSchema custTable = db.ensureTable(Customer.class);
             custTable.insert(con, new Customer(1, "alice"));
             custTable.insert(con, new Customer(2, "bob"));
 
@@ -45,7 +47,7 @@ public class SqormCursorTest {
             String selectQuery = "select 'net.squarelabs.sqorm.Customer' as classpath, customer.* from customer;";
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
                 stmt.executeQuery();
-                SqormCursor cur = new SqormCursor(stmt);
+                SqormCursor cur = new SqormCursor(db, stmt);
                 while(cur.hasNext()) {
                     Object record = cur.next();
                     if(record == null) {
@@ -55,7 +57,7 @@ public class SqormCursorTest {
                 }
             }
         }
-        Assert.assertEquals("All records iterable", 1, count);
+        Assert.assertEquals("All records iterable", 2, count);
         Assert.assertTrue("All records valid", recordsValid);
     }
 }
