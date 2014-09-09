@@ -11,13 +11,20 @@ Done
 * Initial Persistor implementation
 * Optimistic concurrency version field
 
+In Progress
+-----------
+* Functional upsert
+* Update queries
+* Dirty record tracking
+* Switch Dataset to use Persistor
+* Working concurrency fields
+* Persistence ordering and/or deferred constraints
 
 TODO
 ----
 * Postgres, Oracle, MS-SQL
 * POJO codegen
 * Fluent DataSet query language
-* Persistence ordering and/or deferred constraints
 * Stored procedure support
 * Static query parsing and translation
 * Named parameter support
