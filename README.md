@@ -1,7 +1,7 @@
 sqorm
 =====
 
-/skôrm/ Static Query ORM Library in Java
+/skwôrm/ - Static Query ORM Library in Java
 
 
 Done
