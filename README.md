@@ -11,10 +11,10 @@ Done
 * Initial Persistor implementation
 * Optimistic concurrency version field
 * Basic updates working
+* Static query parsing and translation
 
 In Progress
 -----------
-* Static query parsing and translation
 * Named parameter support
 
 TODO
