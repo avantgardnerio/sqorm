@@ -8,8 +8,10 @@ public @interface Column {
 
     String name() default "";
 
-    int pkOrdinal() default 0;
+    int pkOrdinal() default -1;
 
     boolean nullable() default true;
+
+    boolean isVersion() default false;
 
 }
