@@ -7,6 +7,17 @@ import org.junit.Test;
 import java.util.List;
 
 public class QueryCacheTest {
+
+    @Test
+    public void loadStatementShouldReplaceNamedParms() {
+        String sql = "select * from customer where customer_id=@CustomerId and name=@CustomerName";
+        String expectedSql = "select * from customer where customer_id=? and name=?;";
+        String[] expectedParms = new String[] { "CustomerId", "CustomerName" };
+        Query actual = QueryCache.loadStatement(sql);
+        Assert.assertEquals(expectedSql, actual.getSql());
+        stringArrayEquals(expectedParms, actual.getParameters());
+    }
+
     @Test
     public void querySplitterShouldSplit() {
         String sql = "select * from customer; select * from order;";

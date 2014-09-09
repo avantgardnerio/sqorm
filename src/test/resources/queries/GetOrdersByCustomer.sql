@@ -2,7 +2,7 @@ select
   'net.squarelabs.model.model.Customer' as classpath,
   c.*
 from customer c
-where c.customer_id=?
+where c.customer_id=@CustomerId
 ;
 
 select
@@ -11,7 +11,7 @@ select
 from customer c
 inner join orders o
   on o.customer_id=c.customer_id
-where c.customer_id=?
+where c.customer_id=@CustomerId
 ;
 
 select
@@ -22,5 +22,5 @@ inner join orders o
   on o.customer_id=c.customer_id
 inner join `OrderDetails` od
   on od.`OrderId`=o.`OrderId`
-where c.customer_id=?
+where c.customer_id=@CustomerId
 ;

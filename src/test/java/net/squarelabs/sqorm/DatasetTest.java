@@ -41,6 +41,7 @@ public class DatasetTest {
             custTable.persist(con, new Customer(2, "bob"));
 
             // Select from tables
+            /*
             QueryCache cache = new QueryCache();
             String selectQuery = cache.loadQuery("GetOrdersByCustomer");
             try(PreparedStatement stmt = con.prepareStatement(selectQuery)) {
@@ -58,6 +59,7 @@ public class DatasetTest {
                     ds.commit(per);
                 }
             }
+            */
         }
     }
 
