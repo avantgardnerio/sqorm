@@ -51,7 +51,7 @@ public class QueryCache {
                     throw new RuntimeException("Value not specified for parameter: " + parmName);
                 }
                 Object val = parms.get(parmName);
-                stmt.setObject(i, val);
+                stmt.setObject(i++, val);
             }
         } catch (Exception ex) {
             stmt.close();
@@ -73,7 +73,8 @@ public class QueryCache {
             throws SQLException {
         PreparedStatement[] stmts = new PreparedStatement[query.size()];
         for(int i = 0; i < stmts.length; i++) {
-            stmts[i] = prepareStatement(con, query.get(i), parms);
+            Query q = query.get(i);
+            stmts[i] = prepareStatement(con, q, parms);
         }
         MultiStatement stmt = new MultiStatement(stmts);
         return stmt;
@@ -134,6 +135,7 @@ public class QueryCache {
      * @return A Query object containing the modified SQL and a list of parameters
      */
     public static Query loadStatement(String sql, DbDriver driver) {
+        sql = sql.trim();
         if(!sql.endsWith(";")) {
             sql += ";";
         }
