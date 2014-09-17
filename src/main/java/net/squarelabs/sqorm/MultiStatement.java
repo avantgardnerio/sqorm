@@ -23,13 +23,31 @@ public class MultiStatement implements PreparedStatement {
         this.statements = statements;
     }
 
-    private PreparedStatement currentStatement() {
-        return statements[currentStmt];
+    private PreparedStatement getCurrentStatement() {
+        return currentStmt < statements.length ? statements[currentStmt] : null;
+    }
+
+    private PreparedStatement nextStatement() {
+        currentStmt++;
+        return getCurrentStatement();
+    }
+
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        return getCurrentStatement().getResultSet();
+    }
+
+    @Override
+    public boolean getMoreResults() throws SQLException {
+        if(getCurrentStatement().getMoreResults()) {
+            return true;
+        }
+        return nextStatement() != null;
     }
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return currentStatement().executeQuery();
+        return getCurrentStatement().executeQuery();
     }
 
     @Override
@@ -378,17 +396,7 @@ public class MultiStatement implements PreparedStatement {
     }
 
     @Override
-    public ResultSet getResultSet() throws SQLException {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public int getUpdateCount() throws SQLException {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public boolean getMoreResults() throws SQLException {
         throw new NotImplementedException();
     }
 
