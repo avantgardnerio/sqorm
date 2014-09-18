@@ -39,7 +39,7 @@ public class MultiStatement implements PreparedStatement {
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        if(getCurrentStatement().getMoreResults()) {
+        if (getCurrentStatement().getMoreResults()) {
             return true;
         }
         return nextStatement() != null;
@@ -53,6 +53,21 @@ public class MultiStatement implements PreparedStatement {
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         return getCurrentStatement().getMetaData();
+    }
+
+    @Override
+    public void close() throws SQLException {
+        Exception e = null;
+        for (PreparedStatement stmt : statements) {
+            try {
+                stmt.close();
+            } catch (Exception ex) {
+
+            }
+        }
+        if(e != null) {
+            throw new RuntimeException("Error closing statement!", e);
+        }
     }
 
     // ------------------------------------- Not implemented ----------------------------------------------------------
@@ -328,11 +343,6 @@ public class MultiStatement implements PreparedStatement {
 
     @Override
     public int executeUpdate(String sql) throws SQLException {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void close() throws SQLException {
         throw new NotImplementedException();
     }
 

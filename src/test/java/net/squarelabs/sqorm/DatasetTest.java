@@ -52,7 +52,7 @@ public class DatasetTest {
                 Cursor cur = new Cursor(db, stmt);
                 Dataset ds = new Dataset(db);
                 ds.fill(cur);
-                Assert.assertEquals("All records iterable", 2, ds.ensureRecordset(Customer.class).size());
+                Assert.assertEquals("All records iterable", 1, ds.ensureRecordset(Customer.class).size());
 
                 ds.attach(new Customer(3, "Charlie"));
                 try(Persistor per = new Persistor(db, con)) {
