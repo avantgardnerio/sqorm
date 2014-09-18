@@ -49,12 +49,12 @@ Done
 
 In Progress
 -----------
+* In-memory hash-map indexing
+* Mapping relationships on load
 * POJO codegen
 
 TODO
 ----
-* In-memory hash-map indexing
-* Mapping relationships on load
 * Postgres, Oracle, MS-SQL
 * Database specific resource file overrides
 * Persistence ordering and/or deferred constraints
