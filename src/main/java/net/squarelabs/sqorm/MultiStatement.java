@@ -51,6 +51,12 @@ public class MultiStatement implements PreparedStatement {
     }
 
     @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+        return getCurrentStatement().getMetaData();
+    }
+
+    // ------------------------------------- Not implemented ----------------------------------------------------------
+    @Override
     public int executeUpdate() throws SQLException {
         throw new NotImplementedException();
     }
@@ -187,11 +193,6 @@ public class MultiStatement implements PreparedStatement {
 
     @Override
     public void setArray(int parameterIndex, Array x) throws SQLException {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
         throw new NotImplementedException();
     }
 
