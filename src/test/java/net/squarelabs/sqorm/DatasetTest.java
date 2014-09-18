@@ -17,6 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatasetTest {
+
+    /**
+     * This is sort of becoming the "god test"... need to split apart into real unit tests.
+     * @throws Exception
+     */
     @Test
     public void canIterate() throws Exception {
         BasicDataSource pool = new BasicDataSource();
