@@ -8,12 +8,12 @@ public class Table {
     private String name;
     private String description;
 
-    @Column(name="name")
+    @Column(name="name", pkOrdinal = 0)
     public String getName() {
         return name;
     }
 
-    @Column(name="name")
+    @Column(name="name", pkOrdinal = 0)
     public void setName(String name) {
         this.name = name;
     }
