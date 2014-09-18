@@ -1,5 +1,5 @@
 select
-  'net.squarelabs.model.Customer' as classpath,
+  'net.squarelabs.sqorm.model.Customer' as classpath,
   c.*
 from customer c
 where c.customer_id=@CustomerId

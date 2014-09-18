@@ -53,6 +53,9 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
                 Object val = resultSet.getObject(colIndex);
                 String colName = metaData.getColumnName(colIndex);
                 ColumnSchema col = table.getColumn(colName);
+                if(col == null) {
+                    throw new Exception("Column [" + colName + "] not found on table " + className);
+                }
                 col.set(record, val);
             }
             return record;
@@ -82,7 +85,7 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
             }
 
             // Once we've got a ResultSet, cache the meta data
-            metaData = stmt.getMetaData();
+            metaData = resultSet.getMetaData();
             return true;
         } catch (Exception ex) {
             throw new RuntimeException("Error getting ResultSet!", ex);

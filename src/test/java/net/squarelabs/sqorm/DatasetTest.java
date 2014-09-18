@@ -1,12 +1,12 @@
 package net.squarelabs.sqorm;
 
 import com.googlecode.flyway.core.Flyway;
-import net.squarelabs.model.Customer;
+import net.squarelabs.sqorm.model.Customer;
+import net.squarelabs.sqorm.model.Order;
 import net.squarelabs.sqorm.dataset.Dataset;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
 import net.squarelabs.sqorm.schema.DbSchema;
-import net.squarelabs.sqorm.schema.TableSchema;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +14,6 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DatasetTest {
@@ -39,9 +38,12 @@ public class DatasetTest {
             DbSchema db = new DbSchema(driver);
 
             // Add records
-            TableSchema custTable = db.ensureTable(Customer.class);
-            custTable.persist(con, new Customer(1, "alice"));
-            custTable.persist(con, new Customer(2, "bob"));
+            try(Persistor per = new Persistor(db, con)) {
+                per.persist(new Customer(1, "alice"));
+                per.persist(new Customer(2, "bob"));
+                per.persist(new Order(1, 1));
+                per.persist(new Order(2, 1));
+            }
 
             // Select from tables
             QueryCache cache = new QueryCache(driver);
@@ -52,7 +54,8 @@ public class DatasetTest {
                 Cursor cur = new Cursor(db, stmt);
                 Dataset ds = new Dataset(db);
                 ds.fill(cur);
-                Assert.assertEquals("All records iterable", 1, ds.ensureRecordset(Customer.class).size());
+                Assert.assertEquals("All parents iterable", 1, ds.ensureRecordset(Customer.class).size());
+                Assert.assertEquals("All children iterable", 2, ds.ensureRecordset(Order.class).size());
 
                 ds.attach(new Customer(3, "Charlie"));
                 try(Persistor per = new Persistor(db, con)) {
