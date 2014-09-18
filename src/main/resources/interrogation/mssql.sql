@@ -51,11 +51,3 @@ inner join syscolumns pcol on fk.rkeyid=pcol.id and fk.rkey=pcol.colid
 inner join syscolumns ccol on fk.fkeyid=ccol.id and fk.fkey=ccol.colid
 order by ParentTable, ParentColumn, ChildTable, ChildColumn
 
--- Triggers
-select
-	tab.name as TableName,
-	tr.name as TriggerName
-from sysobjects tr
-inner join sysobjects tab on tr.parent_obj=tab.id
-where tr.xtype='TR' and tab.xtype='U'
-
