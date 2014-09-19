@@ -1,9 +1,10 @@
 package net.squarelabs.sqorm.codegen;
 
-import net.squarelabs.sqorm.codegen.Column;
+        import net.squarelabs.sqorm.annotation.Association;
+        import net.squarelabs.sqorm.codegen.Column;
 
-import java.util.ArrayList;
-import java.util.List;
+        import java.util.ArrayList;
+        import java.util.List;
 
 @net.squarelabs.sqorm.annotation.Table(name = "Table")
 public class Table {
@@ -30,12 +31,12 @@ public class Table {
 
     @net.squarelabs.sqorm.annotation.Column(name="description")
 
-    // TODO: Relationship annotations
+    @Association(name = "TableColumnRel", primaryKey = "name", foreignKey = "name", isForeignKey = false)
     public String getDescription() {
         return description;
     }
 
-    // TODO: Relationship annotations
+    @Association(name = "TableColumnRel", primaryKey = "name", foreignKey = "name", isForeignKey = false)
     public List<Column> getColumnChildren() {
         return columnChildren;
     }
