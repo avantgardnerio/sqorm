@@ -46,6 +46,7 @@ Done
 * Basic updates working
 * Static query parsing and translation
 * Named parameter support
+* Database specific resource file overrides
 
 In Progress
 -----------
@@ -53,7 +54,6 @@ In Progress
 * Mapping relationships on load
 * POJO codegen
 * Fluent DataSet query language
-* Database specific resource file overrides
 
 TODO
 ----
