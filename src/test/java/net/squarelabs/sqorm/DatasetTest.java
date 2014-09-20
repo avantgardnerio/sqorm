@@ -54,18 +54,14 @@ public class DatasetTest {
             QueryCache cache = new QueryCache(driver);
             Map<String,Object> parms = new HashMap<>();
             parms.put("CustomerId", 1);
-            try(PreparedStatement stmt = cache.prepareQuery(con, "GetOrdersByCustomer", parms)) {
-                stmt.executeQuery();
-                Cursor cur = new Cursor(db, stmt);
-                Dataset ds = new Dataset(db);
-                ds.fill(cur);
-                Assert.assertEquals("All parents iterable", 1, ds.ensureRecordset(Customer.class).size());
-                Assert.assertEquals("All children iterable", 2, ds.ensureRecordset(Order.class).size());
+            Dataset ds = new Dataset(db);
+            ds.fill(cache, con, "GetOrdersByCustomer", parms);
+            Assert.assertEquals("All parents iterable", 1, ds.ensureRecordset(Customer.class).size());
+            Assert.assertEquals("All children iterable", 2, ds.ensureRecordset(Order.class).size());
 
-                ds.attach(new Customer(3, "Charlie"));
-                try(Persistor per = new Persistor(db, con)) {
-                    ds.commit(per);
-                }
+            ds.attach(new Customer(3, "Charlie"));
+            try(Persistor per = new Persistor(db, con)) {
+                ds.commit(per);
             }
         }
     }

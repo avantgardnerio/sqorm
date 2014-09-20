@@ -2,8 +2,11 @@ package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.Cursor;
 import net.squarelabs.sqorm.Persistor;
+import net.squarelabs.sqorm.QueryCache;
 import net.squarelabs.sqorm.schema.DbSchema;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +44,20 @@ public class Dataset {
             recordsets.put(clazz, rs);
             return rs;
         }
+    }
+
+    public void fill(QueryCache cache, Connection con, String queryName, Map<String,Object> parms) {
+        try(PreparedStatement stmt = cache.prepareQuery(con, queryName, parms)) {
+            stmt.executeQuery();
+            fill(stmt);
+        } catch (Exception ex) {
+            throw new RuntimeException("Error running query " + queryName, ex);
+        }
+    }
+
+    public void fill(PreparedStatement stmt) throws SQLException {
+        Cursor cur = new Cursor(db, stmt);
+        fill(cur);
     }
 
     public void fill(Cursor cursor) {
