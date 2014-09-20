@@ -46,7 +46,7 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
         try {
             String className = resultSet.getString(1);
             Class<?> clazz = Class.forName(className);
-            TableSchema table = db.ensureTable(clazz);
+            TableSchema table = db.getTable(clazz);
             Object record = clazz.newInstance();
             int colCount = metaData.getColumnCount();
             for (int colIndex = 2; colIndex <= colCount; colIndex++) {

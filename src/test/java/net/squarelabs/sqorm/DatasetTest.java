@@ -40,7 +40,7 @@ public class DatasetTest {
             flyway.setDataSource(pool);
             flyway.setLocations("ddl/" + driver.name());
             flyway.migrate();
-            DbSchema db = new DbSchema(driver);
+            DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.model");
 
             // Add records
             try(Persistor per = new Persistor(db, con)) {

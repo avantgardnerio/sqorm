@@ -21,7 +21,7 @@ public class Persistor implements AutoCloseable {
 
     public void persist(Object record) {
         Class<?> clazz = record.getClass();
-        TableSchema table = db.ensureTable(clazz);
+        TableSchema table = db.getTable(clazz);
         table.persist(con, record);
     }
 
