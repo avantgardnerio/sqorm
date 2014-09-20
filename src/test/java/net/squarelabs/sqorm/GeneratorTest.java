@@ -34,6 +34,8 @@ public class GeneratorTest {
                 if(cols.size() <= 0) {
                     hasColumns = false;
                 }
+                String java = Generator.generateTableSource(table, "net.squarelabs.sqorm.test");
+                System.out.print(java);
             }
             Assert.assertTrue("Child column records loaded", hasColumns);
         }
