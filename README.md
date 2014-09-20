@@ -34,7 +34,7 @@ Design Trade-offs
 * No lazy loading - if not explicitly loaded in SQL, children won't appear in child iterators
 * No impedance mapping - 1:1 POJO to table, 1:1 column to accessor
 * Caching is at application level - Loads are always done by queries, queries will always access the real DB
-* New library - small user base (though the concepts have been refined over 5 years)
+* New library - small user base
 
 
 Done
