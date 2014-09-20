@@ -47,11 +47,11 @@ Done
 * Static query parsing and translation
 * Named parameter support
 * Database specific resource file overrides
+* In-memory hash-map indexing
+* Mapping relationships on load
 
 In Progress
 -----------
-* In-memory hash-map indexing
-* Mapping relationships on load
 * POJO codegen
 * Fluent DataSet query language
 
