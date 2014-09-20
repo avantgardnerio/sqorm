@@ -1,4 +1,4 @@
-package net.squarelabs.sqorm;
+package net.squarelabs.sqorm.sql;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

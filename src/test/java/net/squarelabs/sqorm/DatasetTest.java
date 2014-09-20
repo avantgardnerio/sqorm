@@ -7,12 +7,12 @@ import net.squarelabs.sqorm.dataset.Dataset;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
 import net.squarelabs.sqorm.schema.DbSchema;
+import net.squarelabs.sqorm.sql.QueryCache;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +24,7 @@ public class DatasetTest {
      */
     @Test
     public void canIterate() throws Exception {
+        // TODO: Move connection stuff into test base class
         BasicDataSource pool = new BasicDataSource();
         pool.setDriverClassName("com.mysql.jdbc.Driver");
         pool.setUsername("sqorm");

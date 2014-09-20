@@ -52,6 +52,7 @@ In Progress
 * In-memory hash-map indexing
 * Mapping relationships on load
 * POJO codegen
+* Fluent DataSet query language
 
 TODO
 ----
@@ -59,7 +60,6 @@ TODO
 * Database specific resource file overrides
 * Persistence ordering and/or deferred constraints
 * Dirty record tracking
-* Fluent DataSet query language
 * Stored procedure support
 * Blob API
 * Ordered indexing

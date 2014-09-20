@@ -1,4 +1,4 @@
-package net.squarelabs.sqorm;
+package net.squarelabs.sqorm.sql;
 
 import net.squarelabs.sqorm.driver.DbDriver;
 import org.apache.commons.io.IOUtils;
@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class QueryCache {
 
@@ -41,7 +40,7 @@ public class QueryCache {
      * @return A PreparedStatement object ready for execution against the DB
      * @throws SQLException
      */
-    public PreparedStatement prepareStatement(Connection con, Query query, Map<String,Object> parms)
+    public PreparedStatement prepareStatement(Connection con, SqlQuery query, Map<String,Object> parms)
             throws SQLException {
         PreparedStatement stmt = con.prepareStatement(query.getSql());
         try {
@@ -73,7 +72,7 @@ public class QueryCache {
             throws SQLException {
         PreparedStatement[] stmts = new PreparedStatement[query.size()];
         for(int i = 0; i < stmts.length; i++) {
-            Query q = query.get(i);
+            SqlQuery q = query.get(i);
             stmts[i] = prepareStatement(con, q, parms);
         }
         MultiStatement stmt = new MultiStatement(stmts);
@@ -117,7 +116,7 @@ public class QueryCache {
                 List<String> statements = splitQuery(sql, driver.mars());
                 query = new MultiQuery();
                 for(String str : statements) {
-                    Query q = loadStatement(str, driver);
+                    SqlQuery q = loadStatement(str, driver);
                     query.add(q);
                 }
                 queries.put(name, query);
@@ -134,7 +133,7 @@ public class QueryCache {
      * @param sql The SQL statement to parse
      * @return A Query object containing the modified SQL and a list of parameters
      */
-    public static Query loadStatement(String sql, DbDriver driver) {
+    public static SqlQuery loadStatement(String sql, DbDriver driver) {
         sql = sql.trim();
         if(!sql.endsWith(";")) {
             sql += ";";
@@ -181,7 +180,7 @@ public class QueryCache {
             // Build string
             sb.append(chr);
         }
-        Query query = new Query(sb.toString(), parms.toArray(new String[]{}));
+        SqlQuery query = new SqlQuery(sb.toString(), parms.toArray(new String[]{}));
         return query;
     }
 

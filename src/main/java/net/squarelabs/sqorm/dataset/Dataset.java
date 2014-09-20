@@ -2,7 +2,7 @@ package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.Cursor;
 import net.squarelabs.sqorm.Persistor;
-import net.squarelabs.sqorm.QueryCache;
+import net.squarelabs.sqorm.sql.QueryCache;
 import net.squarelabs.sqorm.schema.DbSchema;
 
 import java.sql.Connection;

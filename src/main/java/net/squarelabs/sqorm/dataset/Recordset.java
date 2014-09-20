@@ -1,8 +1,11 @@
 package net.squarelabs.sqorm.dataset;
 
-import java.util.ArrayList;
+import net.squarelabs.sqorm.fluent.Query;
 
-public class Recordset extends ArrayList<Object> {
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Recordset extends ArrayList<Object> implements Query {
 
     private final Class<?> clazz;
 
@@ -18,5 +21,10 @@ public class Recordset extends ArrayList<Object> {
     public boolean add(Object record) throws UnsupportedOperationException {
         // TODO: Check for existing record with same PK, and remove it first!
         return super.add(record);
+    }
+
+    @Override
+    public <T> Collection<T> all() {
+        return (Collection<T>)this;
     }
 }

@@ -1,10 +1,29 @@
 package net.squarelabs.sqorm.codegen;
 
+import net.squarelabs.sqorm.sql.QueryCache;
 import net.squarelabs.sqorm.codegen.model.Column;
 import net.squarelabs.sqorm.codegen.model.Table;
 import net.squarelabs.sqorm.dataset.Dataset;
+import net.squarelabs.sqorm.driver.DbDriver;
+import net.squarelabs.sqorm.driver.DriverFactory;
+import net.squarelabs.sqorm.schema.DbSchema;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
 
 public class Generator {
+
+    public static Collection<Table> loadSchema(Connection con) throws SQLException {
+        // TODO: Wrap this mess up in a single helper class
+        DbDriver driver = DriverFactory.getDriver(con);
+        DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.codegen.model");
+        QueryCache cache = new QueryCache(driver);
+        Dataset ds = new Dataset(db);
+        ds.fill(cache, con, "Interrogate", null);
+        return ds.ensureRecordset(Table.class).all();
+    }
 
     public static String generateTableSource(Table table, String packageName) {
         StringBuilder sb = new StringBuilder();
