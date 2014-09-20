@@ -18,6 +18,7 @@ public class TableSchema {
     private final String tableName;
 
     // Reflection cache
+    private final List<IndexSchema> indices = new ArrayList<>();
     private final SortedMap<String, ColumnSchema> columns;
     private final SortedMap<String, ColumnSchema> updateColumns;
     private final ColumnSchema versionCol;
@@ -47,6 +48,37 @@ public class TableSchema {
 
     public ColumnSchema getColumn(String name) {
         return columns.get(name);
+    }
+
+    public List<ColumnSchema> getColumns(String[] colNames) {
+        List<ColumnSchema> cols = new ArrayList<>();
+        for(String colName : colNames) {
+            ColumnSchema col = getColumn(colName);
+            if(col == null) {
+                throw new RuntimeException("Column not found: " + colName);
+            }
+            cols.add(col);
+        }
+        return cols;
+    }
+
+    public IndexSchema ensureIndex(List<ColumnSchema> cols) {
+        IndexSchema idx = getIndex(cols);
+        if(idx != null) {
+            return idx;
+        }
+        idx = new IndexSchema(cols);
+        indices.add(idx);
+        return idx;
+    }
+
+    public IndexSchema getIndex(List<ColumnSchema> cols) {
+        for(IndexSchema idx : indices) {
+            if(idx.matches(cols)) {
+                return idx;
+            }
+        }
+        return null;
     }
 
     public int getVersion(Object record) {
