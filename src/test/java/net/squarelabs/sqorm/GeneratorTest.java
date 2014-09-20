@@ -1,6 +1,7 @@
 package net.squarelabs.sqorm;
 
 import net.squarelabs.sqorm.codegen.Generator;
+import net.squarelabs.sqorm.codegen.model.Column;
 import net.squarelabs.sqorm.codegen.model.Table;
 import net.squarelabs.sqorm.dataset.Dataset;
 import net.squarelabs.sqorm.driver.MySqlDriver;
@@ -29,7 +30,8 @@ public class GeneratorTest {
             Assert.assertEquals("Tables are present", tables.size(), 4);
             boolean hasColumns = true;
             for(Table table : tables) {
-                if(table.getColumnChildren().size() <= 0) {
+                Collection<Column> cols = table.getColumnChildren();
+                if(cols.size() <= 0) {
                     hasColumns = false;
                 }
             }

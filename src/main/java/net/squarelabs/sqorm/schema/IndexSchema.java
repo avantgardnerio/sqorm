@@ -1,5 +1,7 @@
 package net.squarelabs.sqorm.schema;
 
+import net.squarelabs.sqorm.index.Key;
+
 import java.util.List;
 
 public class IndexSchema {
@@ -22,11 +24,10 @@ public class IndexSchema {
         return true;
     }
 
-    public Object[] getKey(Object record) {
-        Object[] key = new Object[columns.size()];
-        for(int i = 0; i < key.length; i++) {
-            ColumnSchema col = columns.get(i);
-            key[i] = col.get(record);
+    public Key getKey(Object record) {
+        Key key = new Key();
+        for(ColumnSchema col : columns) {
+            key.add(col.get(record));
         }
         return key;
     }

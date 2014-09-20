@@ -2,6 +2,7 @@ package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.fluent.Query;
 import net.squarelabs.sqorm.index.BaseIndex;
+import net.squarelabs.sqorm.index.Key;
 import net.squarelabs.sqorm.index.MultiHashIndex;
 import net.squarelabs.sqorm.schema.IndexSchema;
 import net.squarelabs.sqorm.schema.TableSchema;
@@ -44,17 +45,17 @@ public class Recordset extends ArrayList<Object> implements Query {
         return getIndex(table.getPrimaryKey());
     }
 
-    public Object[] getPrimaryKey(Object record) {
+    public Key getPrimaryKey(Object record) {
         return getPrimaryIndex().getKey(record);
     }
 
-    public Object findByPk(Object[] pk) {
+    public Object findByPk(Key pk) {
         return getPrimaryIndex().findOne(pk);
     }
 
     @Override
     public boolean add(Object record) throws UnsupportedOperationException {
-        Object[] pk = getPrimaryKey(record);
+        Key pk = getPrimaryKey(record);
         Object existing = findByPk(pk);
 
         // Remove

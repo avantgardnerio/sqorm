@@ -3,6 +3,7 @@ package net.squarelabs.sqorm.dataset;
 import net.squarelabs.sqorm.Cursor;
 import net.squarelabs.sqorm.Persistor;
 import net.squarelabs.sqorm.index.BaseIndex;
+import net.squarelabs.sqorm.index.Key;
 import net.squarelabs.sqorm.schema.RelationSchema;
 import net.squarelabs.sqorm.schema.TableSchema;
 import net.squarelabs.sqorm.sql.QueryCache;
@@ -95,7 +96,7 @@ public class Dataset {
             BaseIndex childIdx = childRs.getIndex(rel.getForeignIndex());
 
             for(Object parentRecord : parentRs) {
-                Object[] key = rel.getPrimaryIndex().getKey(parentRecord);
+                Key key = rel.getPrimaryIndex().getKey(parentRecord);
                 Set<Object> children = childIdx.find(key);
                 rel.setChildren(parentRecord, children);
                 for(Object childRecord : children) {

@@ -12,18 +12,18 @@ public abstract class BaseIndex {
         this.idx = idx;
     }
 
-    public Object[] getKey(Object record) {
+    public Key getKey(Object record) {
         return idx.getKey(record);
     }
 
-    public abstract Set<Object> find(Object[] key);
+    public abstract Set<Object> find(Key key);
 
     public abstract void add(Object record);
 
     public abstract void remove(Object record);
 
     // TODO: Fix this hack! Keep separate lists for single vs multi indexes?
-    public Object findOne(Object[] key) {
+    public Object findOne(Key key) {
         Set<Object> res = find(key);
         if(res.size() == 0) {
             return null;
