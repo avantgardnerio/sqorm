@@ -107,7 +107,7 @@ public class QueryCache {
             return query;
         }
         synchronized (this) {
-            String path = "/" + new File(queryFolder, name + ".sql").getPath();
+            String path = File.separator + new File(queryFolder, name + ".sql").getPath();
             try (InputStream stream = QueryCache.class.getClass().getResourceAsStream(path)) {
                 if (stream == null) {
                     throw new InvalidParameterException("Query not found: " + path);
