@@ -4,7 +4,6 @@ import net.squarelabs.sqorm.fluent.Query;
 import net.squarelabs.sqorm.index.BaseIndex;
 import net.squarelabs.sqorm.index.MultiHashIndex;
 import net.squarelabs.sqorm.schema.IndexSchema;
-import net.squarelabs.sqorm.schema.RelationSchema;
 import net.squarelabs.sqorm.schema.TableSchema;
 
 import java.util.*;
@@ -41,9 +40,35 @@ public class Recordset extends ArrayList<Object> implements Query {
         return clazz;
     }
 
+    public BaseIndex getPrimaryIndex() {
+        return getIndex(table.getPrimaryKey());
+    }
+
+    public Object[] getPrimaryKey(Object record) {
+        return getPrimaryIndex().getKey(record);
+    }
+
+    public Object findByPk(Object[] pk) {
+        return getPrimaryIndex().findOne(pk);
+    }
+
     @Override
     public boolean add(Object record) throws UnsupportedOperationException {
-        // TODO: Check for existing record with same PK, and remove it first!
+        Object[] pk = getPrimaryKey(record);
+        Object existing = findByPk(pk);
+
+        // Remove
+        if(existing != null) {
+            for(BaseIndex idx : indices.values()) {
+                idx.remove(existing);
+            }
+            remove(existing);
+        }
+
+        // Add
+        for(BaseIndex idx : indices.values()) {
+            idx.add(record);
+        }
         return super.add(record);
     }
 

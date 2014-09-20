@@ -18,4 +18,16 @@ public class MultiHashIndex extends BaseIndex {
         return map.get(key);
     }
 
+    @Override
+    public void add(Object record) {
+        Object[] key = getKey(record);
+        map.put(key, record);
+    }
+
+    @Override
+    public void remove(Object record) {
+        Object[] key = getKey(record);
+        map.removeAll(key);
+    }
+
 }

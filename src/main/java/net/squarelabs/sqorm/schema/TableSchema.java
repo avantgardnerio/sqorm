@@ -22,6 +22,7 @@ public class TableSchema {
     private final SortedMap<String, ColumnSchema> updateColumns;
     private final ColumnSchema versionCol;
     private final List<ColumnSchema> idColumns;
+    private final IndexSchema primaryKey;
 
     // Cached query syntax
     private final String insertQuery;
@@ -44,10 +45,15 @@ public class TableSchema {
         versionCol = findVersionCol(columns);
         idColumns = findIdCols(columns);
         updateColumns = findUpdateCols(columns, idColumns);
+        primaryKey = ensureIndex(findPk(columns));
 
         // Write queries
         insertQuery = writeInsertQuery(columns, driver, tableName);
         updateQuery = writeUpdateQuery(updateColumns, driver, tableName, idColumns);
+    }
+
+    public IndexSchema getPrimaryKey() {
+        return primaryKey;
     }
 
     public Class<?> getType() {
@@ -164,6 +170,22 @@ public class TableSchema {
         return idColumns;
     }
 
+    private static List<ColumnSchema> findPk(Map<String, ColumnSchema> columns) {
+        List<ColumnSchema> pk = new ArrayList<>();
+        for(ColumnSchema col : columns.values()) {
+            if(col.getPkOrdinal() >= 0) {
+                pk.add(col);
+            }
+        }
+        pk.sort(new Comparator<ColumnSchema>() {
+            @Override
+            public int compare(ColumnSchema a, ColumnSchema b) {
+                return a.getPkOrdinal() - b.getPkOrdinal();
+            }
+        });
+        return pk;
+    }
+
     private static ColumnSchema findVersionCol(Map<String, ColumnSchema> columns) {
         for (ColumnSchema col : columns.values()) {
             if (col.isVersion()) {
@@ -197,37 +219,31 @@ public class TableSchema {
 
     private static SortedMap<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
         // Collect accessors
-        Map<String, Method> getters = new HashMap<>();
-        Map<String, Method> setters = new HashMap<>();
-        Map<String, Integer> pkFields = new HashMap<>();
+        Map<String, AnnotationCache> annos = new HashMap<>();
         String versionCol = null;
         for (Method method : clazz.getMethods()) {
             Column ano = method.getAnnotation(Column.class);
             if (ano == null) {
                 continue;
             }
-            String colName = ano.name();
+            AnnotationCache ac = getAc(annos, ano.name());
             if (method.getReturnType() == void.class) {
-                setters.put(colName, method);
+                ac.setter = method;
             } else {
-                getters.put(colName, method);
+                ac.getter = method;
             }
-            pkFields.put(colName, ano.pkOrdinal());
+            ac.pkOrdinal = ano.pkOrdinal();
             if (ano.isVersion()) {
-                versionCol = colName;
+                versionCol = ac.name;
             }
         }
 
         // Translate to columns
         SortedMap<String, ColumnSchema> columns = new TreeMap<>();
-        for (Map.Entry<String, Method> entry : getters.entrySet()) {
-            String colName = entry.getKey();
-            Method getter = entry.getValue();
-            Method setter = setters.get(colName);
-            int pkOrdinal = pkFields.get(colName);
-            boolean isVersion = StringUtils.equals(colName, versionCol);
-            ColumnSchema col = new ColumnSchema(colName, getter, setter, pkOrdinal, isVersion);
-            columns.put(colName, col);
+        for (AnnotationCache ac : annos.values()) {
+            boolean isVersion = StringUtils.equals(ac.name, versionCol);
+            ColumnSchema col = new ColumnSchema(ac.name, ac.getter, ac.setter, ac.pkOrdinal, isVersion);
+            columns.put(ac.name, col);
         }
         return columns;
     }
@@ -247,6 +263,26 @@ public class TableSchema {
 
     protected void addParentRelation(RelationSchema rel) {
         parentRelations.add(rel);
+    }
+
+    private static AnnotationCache getAc(Map<String, AnnotationCache> annos, String name) {
+        if(annos.containsKey(name)) {
+            return annos.get(name);
+        }
+        AnnotationCache ac = new AnnotationCache(name);
+        annos.put(name, ac);
+        return ac;
+    }
+
+    private static class AnnotationCache {
+        public String name;
+        public Method getter;
+        public Method setter;
+        public int pkOrdinal;
+
+        public AnnotationCache(String name) {
+            this.name = name;
+        }
     }
 
 }
