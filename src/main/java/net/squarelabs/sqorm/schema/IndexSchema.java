@@ -21,4 +21,13 @@ public class IndexSchema {
         }
         return true;
     }
+
+    public Object[] getKey(Object record) {
+        Object[] key = new Object[columns.size()];
+        for(int i = 0; i < key.length; i++) {
+            ColumnSchema col = columns.get(i);
+            key[i] = col.get(record);
+        }
+        return key;
+    }
 }

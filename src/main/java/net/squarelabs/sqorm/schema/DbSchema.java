@@ -22,6 +22,18 @@ public class DbSchema {
         tables = getTables(driver, namespace);
         Map<String,AssociationCache> associations = getAssociations(tables);
         relationships = getRelationships(associations);
+        cacheRelations(relationships);
+    }
+
+    public Map<String, RelationSchema> getRelationships() {
+        return Collections.unmodifiableMap(relationships);
+    }
+
+    private static void cacheRelations(Map<String, RelationSchema> relationships) {
+        for(RelationSchema rel : relationships.values()) {
+            rel.getPrimaryTable().addChildRelation(rel);
+            rel.getForeignTable().addParentRelation(rel);
+        }
     }
 
     private static Map<Class<?>, TableSchema> getTables(DbDriver driver, String namespace) {
@@ -76,7 +88,8 @@ public class DbSchema {
             IndexSchema primaryIdx = ac.parentTable.ensureIndex(primaryCols);
             List<ColumnSchema> foreignCols = ac.childTable.getColumns(ac.association.foreignKey().split(","));
             IndexSchema foreignIdx = ac.childTable.ensureIndex(foreignCols);
-            RelationSchema rel = new RelationSchema(relName, primaryIdx, foreignIdx);
+            RelationSchema rel = new RelationSchema(relName, ac.parentTable, ac.childTable, primaryIdx, foreignIdx,
+                    ac.parentSettter, ac.childrenSettter);
             relationships.put(relName, rel);
         }
 

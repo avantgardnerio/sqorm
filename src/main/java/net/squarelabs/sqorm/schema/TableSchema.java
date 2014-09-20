@@ -4,13 +4,11 @@ import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 import net.squarelabs.sqorm.driver.DbDriver;
 import org.apache.commons.lang.StringUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class TableSchema {
@@ -28,6 +26,9 @@ public class TableSchema {
     // Cached query syntax
     private final String insertQuery;
     private final String updateQuery;
+
+    private final List<RelationSchema> parentRelations = new ArrayList<>();
+    private final List<RelationSchema> childRelations = new ArrayList<>();
 
     public TableSchema(Class<?> clazz, DbDriver driver) {
         this.clazz = clazz;
@@ -67,6 +68,10 @@ public class TableSchema {
             cols.add(col);
         }
         return cols;
+    }
+
+    public List<IndexSchema> getIndices() {
+        return Collections.unmodifiableList(indices);
     }
 
     public IndexSchema ensureIndex(List<ColumnSchema> cols) {
@@ -225,6 +230,23 @@ public class TableSchema {
             columns.put(colName, col);
         }
         return columns;
+    }
+
+    public List<RelationSchema> getChildRelations() {
+        return Collections.unmodifiableList(childRelations);
+    }
+
+    protected void addChildRelation(RelationSchema rel) {
+        indices.add(rel.getPrimaryIndex());
+        childRelations.add(rel);
+    }
+
+    public List<RelationSchema> getParentRelations() {
+        return Collections.unmodifiableList(parentRelations);
+    }
+
+    protected void addParentRelation(RelationSchema rel) {
+        parentRelations.add(rel);
     }
 
 }
