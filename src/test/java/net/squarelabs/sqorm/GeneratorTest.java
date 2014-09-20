@@ -26,6 +26,14 @@ public class GeneratorTest {
 
         try(Connection con = pool.getConnection()) {
             Collection<Table> tables = Generator.loadSchema(con);
+            Assert.assertEquals("Tables are present", tables.size(), 2);
+            boolean hasColumns = true;
+            for(Table table : tables) {
+                if(table.getColumnChildren().size() <= 0) {
+                    hasColumns = false;
+                }
+            }
+            Assert.assertTrue("Child column records loaded", hasColumns);
         }
     }
 }

@@ -11,14 +11,14 @@ public class Table {
     private String name;
     private String description;
 
-    private final List<Column> columnChildren = new ArrayList<>();
+    private List<Column> columnChildren = new ArrayList<>();
 
-    @net.squarelabs.sqorm.annotation.Column(name="name", pkOrdinal = 0)
+    @net.squarelabs.sqorm.annotation.Column(name="table_name", pkOrdinal = 0)
     public String getName() {
         return name;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name="name", pkOrdinal = 0)
+    @net.squarelabs.sqorm.annotation.Column(name="table_name", pkOrdinal = 0)
     public void setName(String name) {
         this.name = name;
     }
@@ -35,9 +35,16 @@ public class Table {
         return description;
     }
 
-    @Association(name = "TableColumnRel", primaryKey = "name", foreignKey = "name", isForeignKey = false)
+    // ------------------------------------- Child Associations -------------------------------------------------------
+
+    @Association(name = "TableColumnRel", primaryKey = "table_name", foreignKey = "table_name", isForeignKey = false)
     public List<Column> getColumnChildren() {
         return columnChildren;
+    }
+
+    @Association(name = "TableColumnRel", primaryKey = "table_name", foreignKey = "table_name", isForeignKey = false)
+    public void setColumnChildren(List<Column> val) {
+        columnChildren = val;
     }
 
 }

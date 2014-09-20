@@ -1,5 +1,10 @@
 package net.squarelabs.sqorm.codegen.model;
 
+import net.squarelabs.sqorm.annotation.Association;
+
+import java.util.List;
+
+@net.squarelabs.sqorm.annotation.Table(name = "Column")
 public class Column {
 
     private String columnName;
@@ -22,6 +27,8 @@ public class Column {
     private boolean isIdentity;
     private boolean isPrimaryKey;
     private boolean isArray;
+
+    private Table parentTable;
 
     @net.squarelabs.sqorm.annotation.Column(name = "table_name", pkOrdinal = 0)
     public String getTableName() {
@@ -191,6 +198,18 @@ public class Column {
     @net.squarelabs.sqorm.annotation.Column(name = "foreign_column")
     public void setForeignColumnName(String foreignColumnName) {
         this.foreignColumnName = foreignColumnName;
+    }
+
+    // ------------------------------------- Parent Associations ------------------------------------------------------
+
+    @Association(name = "TableColumnRel", primaryKey = "table_name", foreignKey = "table_name", isForeignKey = true)
+    public Table getTableParent() {
+        return parentTable;
+    }
+
+    @Association(name = "TableColumnRel", primaryKey = "table_name", foreignKey = "table_name", isForeignKey = true)
+    public void setTableParent(Table val) {
+        parentTable = val;
     }
 
 }
