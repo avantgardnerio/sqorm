@@ -53,11 +53,11 @@ In Progress
 * Mapping relationships on load
 * POJO codegen
 * Fluent DataSet query language
+* Database specific resource file overrides
 
 TODO
 ----
 * Postgres, Oracle, MS-SQL
-* Database specific resource file overrides
 * Persistence ordering and/or deferred constraints
 * Dirty record tracking
 * Stored procedure support
