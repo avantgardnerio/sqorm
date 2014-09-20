@@ -1,5 +1,8 @@
 package net.squarelabs.sqorm.codegen;
 
+import net.squarelabs.sqorm.codegen.model.Column;
+import net.squarelabs.sqorm.codegen.model.Table;
+
 public class Generator {
     public static String generateTableSource(Table table, String packageName) {
         StringBuilder sb = new StringBuilder();

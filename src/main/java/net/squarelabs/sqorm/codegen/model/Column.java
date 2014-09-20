@@ -1,4 +1,4 @@
-package net.squarelabs.sqorm.codegen;
+package net.squarelabs.sqorm.codegen.model;
 
 public class Column {
 

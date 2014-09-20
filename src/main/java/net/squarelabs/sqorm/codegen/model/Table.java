@@ -1,7 +1,6 @@
-package net.squarelabs.sqorm.codegen;
+package net.squarelabs.sqorm.codegen.model;
 
         import net.squarelabs.sqorm.annotation.Association;
-        import net.squarelabs.sqorm.codegen.Column;
 
         import java.util.ArrayList;
         import java.util.List;
