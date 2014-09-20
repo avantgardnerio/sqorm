@@ -23,6 +23,11 @@ public class QueryCache {
         this.driver = driver;
     }
 
+    public QueryCache(DbDriver driver, String queryFolder) {
+        this.driver = driver;
+        this.queryFolder = queryFolder;
+    }
+
     public String getQueryFolder() {
         return queryFolder;
     }
@@ -107,10 +112,9 @@ public class QueryCache {
             return query;
         }
         synchronized (this) {
-            String path = File.separator + new File(queryFolder, name + ".sql").getPath();
-            try (InputStream stream = QueryCache.class.getClass().getResourceAsStream(path)) {
+            try (InputStream stream = getQuery(name)) {
                 if (stream == null) {
-                    throw new InvalidParameterException("Query not found: " + path);
+                    throw new InvalidParameterException("Query not found: " + name);
                 }
                 String sql = IOUtils.toString(stream, "UTF-8");
                 List<String> statements = splitQuery(sql, driver.mars());
@@ -125,6 +129,35 @@ public class QueryCache {
                 throw new RuntimeException("Error loading query!", ex);
             }
         }
+    }
+
+    /**
+     * Gets a resource stream by name - be sure to close the result!
+     *
+     * @param name The resource stresm to get
+     * @return A resource stream or null
+     */
+    private InputStream getQuery(String name) {
+        File root = new File(queryFolder);
+
+        // Try a DB-specific query
+        File folder = new File(root, driver.name());
+        File file = new File(folder, name + ".sql");
+        String path = File.separator + file.getPath();
+        InputStream stream = getClass().getResourceAsStream(path.replace("\\", "/"));
+        if(stream != null) {
+            return stream;
+        }
+
+        // Try a universal query
+        file = new File(root, name + ".sql");
+        path = File.separator + file.getPath();
+        stream = getClass().getResourceAsStream(path.replace("\\", "/"));
+        if(stream != null) {
+            return stream;
+        }
+
+        return null;
     }
 
     /**

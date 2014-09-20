@@ -7,6 +7,7 @@ public class ColumnSchema {
     private final String name;
     private final Method getter;
     private final Method setter;
+    private final Class<?> type;
 
     private final int pkOrdinal;
     private final boolean isVersion;
@@ -17,6 +18,11 @@ public class ColumnSchema {
         this.setter = setter;
         this.pkOrdinal = pkOrdinal;
         this.isVersion = isVersion;
+        this.type = getter.getReturnType();
+    }
+
+    public Class<?> getType() {
+        return this.type;
     }
 
     public int getPkOrdinal() {
@@ -42,7 +48,7 @@ public class ColumnSchema {
         try {
             setter.invoke(record, new Object[] {val});
         } catch (Exception ex) {
-            throw new RuntimeException("Error setting record value!", ex);
+            throw new RuntimeException("Error setting value [" + val + "] on column [" + name + "]", ex);
         }
     }
 }

@@ -3,6 +3,7 @@ package net.squarelabs.sqorm;
 import net.squarelabs.sqorm.schema.ColumnSchema;
 import net.squarelabs.sqorm.schema.DbSchema;
 import net.squarelabs.sqorm.schema.TableSchema;
+import net.squarelabs.sqorm.sql.TypeConverter;
 
 import java.sql.*;
 import java.util.Iterator;
@@ -50,13 +51,14 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
             Object record = clazz.newInstance();
             int colCount = metaData.getColumnCount();
             for (int colIndex = 2; colIndex <= colCount; colIndex++) {
-                Object val = resultSet.getObject(colIndex);
-                String colName = metaData.getColumnName(colIndex);
+                Object sqlVal = resultSet.getObject(colIndex);
+                String colName = metaData.getColumnLabel(colIndex);
                 ColumnSchema col = table.getColumn(colName);
                 if(col == null) {
                     throw new Exception("Column [" + colName + "] not found on table " + className);
                 }
-                col.set(record, val);
+                Object javaVal = TypeConverter.SqlToJava(col.getType(), sqlVal);
+                col.set(record, javaVal);
             }
             return record;
         } catch (Exception ex) {

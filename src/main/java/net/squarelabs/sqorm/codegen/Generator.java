@@ -19,9 +19,9 @@ public class Generator {
         // TODO: Wrap this mess up in a single helper class
         DbDriver driver = DriverFactory.getDriver(con);
         DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.codegen.model");
-        QueryCache cache = new QueryCache(driver);
+        QueryCache cache = new QueryCache(driver, "interrogation");
         Dataset ds = new Dataset(db);
-        ds.fill(cache, con, "Interrogate", null);
+        ds.fill(cache, con, "interrogate", null);
         return ds.ensureRecordset(Table.class).all();
     }
 

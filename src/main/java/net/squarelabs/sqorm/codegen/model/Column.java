@@ -17,11 +17,11 @@ public class Column {
     private String foreignTableName;
     private String foreignColumnName;
 
-    private int seed;
-    private int scale;
-    private int increment;
-    private int maxLength;
-    private int precision;
+    private Integer seed;
+    private Integer scale;
+    private Integer increment;
+    private Integer maxLength;
+    private Integer precision;
     private boolean isNullable;
 
     private boolean isIdentity;
@@ -71,32 +71,32 @@ public class Column {
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "max_length")
-    public int getMaxLength() {
+    public Integer getMaxLength() {
         return maxLength;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "max_length")
-    public void setMaxLength(int maxLength) {
+    public void setMaxLength(Integer maxLength) {
         this.maxLength = maxLength;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "precision")
-    public int getPrecision() {
+    public Integer getPrecision() {
         return precision;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "precision")
-    public void setPrecision(int precision) {
+    public void setPrecision(Integer precision) {
         this.precision = precision;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "scale")
-    public int getScale() {
+    public Integer getScale() {
         return scale;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "scale")
-    public void setScale(int scale) {
+    public void setScale(Integer scale) {
         this.scale = scale;
     }
 
@@ -121,22 +121,22 @@ public class Column {
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "seed")
-    public int getSeed() {
+    public Integer getSeed() {
         return seed;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "seed")
-    public void setSeed(int seed) {
+    public void setSeed(Integer seed) {
         this.seed = seed;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "increment")
-    public int getIncrement() {
+    public Integer getIncrement() {
         return increment;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "increment")
-    public void setIncrement(int increment) {
+    public void setIncrement(Integer increment) {
         this.increment = increment;
     }
 
