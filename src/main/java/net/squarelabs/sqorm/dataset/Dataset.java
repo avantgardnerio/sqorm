@@ -2,6 +2,7 @@ package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.Cursor;
 import net.squarelabs.sqorm.Persistor;
+import net.squarelabs.sqorm.schema.TableSchema;
 import net.squarelabs.sqorm.sql.QueryCache;
 import net.squarelabs.sqorm.schema.DbSchema;
 
@@ -40,7 +41,8 @@ public class Dataset {
             return rs;
         }
         synchronized (this) {
-            rs = new Recordset(clazz);
+            TableSchema table = db.getTable(clazz);
+            rs = new Recordset(table);
             recordsets.put(clazz, rs);
             return rs;
         }

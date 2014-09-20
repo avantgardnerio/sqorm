@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class TableSchema {
 
     private final String tableName;
+    private final Class<?> clazz;
 
     // Reflection cache
     private final List<IndexSchema> indices = new ArrayList<>();
@@ -29,6 +30,8 @@ public class TableSchema {
     private final String updateQuery;
 
     public TableSchema(Class<?> clazz, DbDriver driver) {
+        this.clazz = clazz;
+
         Table tableAno = clazz.getAnnotation(Table.class);
         if (tableAno == null) {
             throw new IllegalArgumentException("Class is not marked with Table annotation!");
@@ -44,6 +47,10 @@ public class TableSchema {
         // Write queries
         insertQuery = writeInsertQuery(columns, driver, tableName);
         updateQuery = writeUpdateQuery(updateColumns, driver, tableName, idColumns);
+    }
+
+    public Class<?> getType() {
+        return clazz;
     }
 
     public ColumnSchema getColumn(String name) {

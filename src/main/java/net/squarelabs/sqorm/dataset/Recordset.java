@@ -1,16 +1,19 @@
 package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.fluent.Query;
+import net.squarelabs.sqorm.schema.TableSchema;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class Recordset extends ArrayList<Object> implements Query {
 
+    private final TableSchema table;
     private final Class<?> clazz;
 
-    public Recordset(Class<?> clazz) {
-        this.clazz = clazz;
+    public Recordset(TableSchema table) {
+        this.table = table;
+        this.clazz = table.getType();
     }
 
     public Class<?> recordClass() {
