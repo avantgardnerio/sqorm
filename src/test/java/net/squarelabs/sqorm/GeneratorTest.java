@@ -26,7 +26,7 @@ public class GeneratorTest {
 
         try(Connection con = pool.getConnection()) {
             Collection<Table> tables = Generator.loadSchema(con);
-            Assert.assertEquals("Tables are present", tables.size(), 2);
+            Assert.assertEquals("Tables are present", tables.size(), 4);
             boolean hasColumns = true;
             for(Table table : tables) {
                 if(table.getColumnChildren().size() <= 0) {
