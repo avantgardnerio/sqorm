@@ -1,0 +1,5 @@
+net\squarelabs\sqorm\model\Order.class
+net\squarelabs\sqorm\GeneratorTest.class
+net\squarelabs\sqorm\model\Customer.class
+net\squarelabs\sqorm\QueryCacheTest.class
+net\squarelabs\sqorm\DatasetTest.class
