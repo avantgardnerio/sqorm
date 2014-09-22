@@ -81,19 +81,22 @@ public class Generator {
 
         // Private variables for column values
         for(Column col : table.getColumnChildren()) {
-            sb.append("    private String " + col.getName() + ";\n");
+            String type = sqlToJava(col.getDataType());
+            sb.append("    private " + type + " " + col.getName() + ";\n");
         }
         sb.append("\n");
 
         // Public accessors for column values
         for(Column col : table.getColumnChildren()) {
+            String type = sqlToJava(col.getDataType());
+
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
-            sb.append("    public String get" + col.getName() + "() {\n");
+            sb.append("    public " + type + " get" + col.getName() + "() {\n");
             sb.append("        return " + col.getName() + ";\n");
             sb.append("    }\n");
             sb.append("\n");
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
-            sb.append("    public void set" + col.getName() + "(String val) {\n");
+            sb.append("    public void set" + col.getName() + "(" + type + " val) {\n");
             sb.append("        this." + col.getName() + " = val;\n");
             sb.append("    }\n");
         }
@@ -102,5 +105,23 @@ public class Generator {
         sb.append("}");
 
         return sb.toString();
+    }
+
+    public static String sqlToJava(String sqlType) {
+
+        if("int".equals(sqlType)) {
+            return "int";
+        }
+        if("timestamp".equals(sqlType)) {
+            return "java.time.Instant";
+        }
+        if("tinyint".equals(sqlType)) {
+            return "byte";
+        }
+        if("varchar".equals(sqlType)) {
+            return "String";
+        }
+
+        throw new RuntimeException("Unknown type: " + sqlType);
     }
 }
