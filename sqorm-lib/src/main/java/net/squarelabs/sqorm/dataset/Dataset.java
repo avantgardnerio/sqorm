@@ -2,6 +2,7 @@ package net.squarelabs.sqorm.dataset;
 
 import net.squarelabs.sqorm.Cursor;
 import net.squarelabs.sqorm.Persistor;
+import net.squarelabs.sqorm.fluent.Query;
 import net.squarelabs.sqorm.index.BaseIndex;
 import net.squarelabs.sqorm.index.Key;
 import net.squarelabs.sqorm.schema.RelationSchema;
@@ -43,6 +44,10 @@ public class Dataset {
 
     public Recordset getRecordset(Class<?> clazz) {
         return recordsets.get(clazz);
+    }
+
+    public Query from(Class<?> clazz) {
+        return ensureRecordset(clazz);
     }
 
     public Recordset ensureRecordset(Class<?> clazz) {

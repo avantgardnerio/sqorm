@@ -74,6 +74,11 @@ public class Recordset extends ArrayList<Object> implements Query {
     }
 
     @Override
+    public <T> T top() {
+        return (T)iterator().next();
+    }
+
+    @Override
     public <T> Collection<T> all() {
         return (Collection<T>)this;
     }
