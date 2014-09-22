@@ -15,6 +15,10 @@ import java.util.List;
 
 public class Generator {
 
+    public static void main(String[] args) {
+        System.out.println("Hello world!");
+    }
+
     public static Collection<Table> loadSchema(Connection con) throws SQLException {
         // TODO: Wrap this mess up in a single helper class
         DbDriver driver = DriverFactory.getDriver(con);
