@@ -1,12 +1,12 @@
 select
-  'net.squarelabs.sqorm.model.Customer' as classpath,
+  'net.squarelabs.sqorm.demo.customer' as classpath,
   c.*
 from customer c
 where c.customer_id=@CustomerId
 ;
 
 select
-  'net.squarelabs.sqorm.model.Order' as classpath,
+  'net.squarelabs.sqorm.demo.order' as classpath,
   o.*
 from customer c
 inner join orders o
@@ -15,7 +15,7 @@ where c.customer_id=@CustomerId
 ;
 
 select
-  'net.squarelabs.sqorm.model.OrderDetails' as classpath,
+  'net.squarelabs.sqorm.demo.orderdetails' as classpath,
   od.*
 from customer c
 inner join orders o
