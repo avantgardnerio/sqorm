@@ -6,7 +6,7 @@ where c.customer_id=@CustomerId
 ;
 
 select
-  'net.squarelabs.sqorm.demo.order' as classpath,
+  'net.squarelabs.sqorm.demo.orders' as classpath,
   o.*
 from customer c
 inner join orders o

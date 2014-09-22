@@ -24,6 +24,9 @@ public class TypeConverter {
             if(value instanceof BigInteger) {
                 return ((BigInteger)value).intValueExact();
             }
+            if(value instanceof Integer) {
+                return ((Integer)value).intValue();
+            }
         }
 
         throw new RuntimeException("Can't convert ["
