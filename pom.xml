@@ -13,6 +13,7 @@
 
 	<modules>
 		<module>sqorm-lib</module>
+        <module>sqorm-demo-web</module>
 	</modules>
 
     <dependencies>
