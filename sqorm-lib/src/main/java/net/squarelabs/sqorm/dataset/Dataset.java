@@ -79,7 +79,6 @@ public class Dataset {
 
     public void fill(Cursor cursor) {
         // Populate rows
-        Set<Recordset> rses = new HashSet<>();
         for(Object record : cursor) {
             Class<?> clazz = record.getClass();
             Recordset rs = ensureRecordset(clazz);

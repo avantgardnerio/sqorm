@@ -25,7 +25,7 @@ public class CustomerServlet extends HttpServlet {
                 Dataset ds = new Dataset(AppContext.getSchema());
 
                 Map<String,Object> parms = new HashMap<>();
-                String customerId = req.getParameter("customerId");
+                int customerId = Integer.parseInt(req.getParameter("customerId"));
                 parms.put("CustomerId", customerId);
                 ds.fill(AppContext.getQueryCache(), con, "GetOrdersByCustomer", parms);
 

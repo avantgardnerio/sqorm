@@ -27,11 +27,6 @@ public class MultiStatement implements PreparedStatement {
         return currentStmt < statements.length ? statements[currentStmt] : null;
     }
 
-    private PreparedStatement nextStatement() {
-        currentStmt++;
-        return getCurrentStatement();
-    }
-
     @Override
     public ResultSet getResultSet() throws SQLException {
         return getCurrentStatement().getResultSet();
@@ -42,7 +37,12 @@ public class MultiStatement implements PreparedStatement {
         if (getCurrentStatement().getMoreResults()) {
             return true;
         }
-        return nextStatement() != null;
+        currentStmt++;
+        if(getCurrentStatement() == null) {
+            return false;
+        }
+        getCurrentStatement().executeQuery();
+        return true;
     }
 
     @Override
