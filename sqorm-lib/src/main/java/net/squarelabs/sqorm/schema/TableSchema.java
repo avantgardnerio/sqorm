@@ -52,6 +52,10 @@ public class TableSchema {
         updateQuery = writeUpdateQuery(updateColumns, driver, tableName, idColumns);
     }
 
+    public String getName() {
+        return tableName;
+    }
+
     public IndexSchema getPrimaryKey() {
         return primaryKey;
     }

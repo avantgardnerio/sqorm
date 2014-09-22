@@ -34,7 +34,7 @@ public class CustomerServlet extends HttpServlet {
             // TODO: Wrap this mess up in a single helper class
             try(Connection con = pool.getConnection()) {
                 DbDriver driver = DriverFactory.getDriver(con);
-                DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.model");
+                DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.demo");
                 QueryCache cache = new QueryCache(driver);
                 Map<String,Object> parms = new HashMap<>();
                 String customerId = req.getParameter("customerId");

@@ -48,6 +48,9 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
             String className = resultSet.getString(1);
             Class<?> clazz = Class.forName(className);
             TableSchema table = db.getTable(clazz);
+            if(table == null) {
+                throw new RuntimeException("Table not found: " + clazz.getCanonicalName());
+            }
             Object record = clazz.newInstance();
             int colCount = metaData.getColumnCount();
             for (int colIndex = 2; colIndex <= colCount; colIndex++) {
@@ -57,7 +60,12 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
                 if(col == null) {
                     throw new Exception("Column [" + colName + "] not found on table " + className);
                 }
-                Object javaVal = TypeConverter.SqlToJava(col.getType(), sqlVal);
+                Object javaVal;
+                try {
+                    javaVal = TypeConverter.SqlToJava(col.getType(), sqlVal);
+                } catch (Exception ex) {
+                    throw new RuntimeException("Error converting [" + table.getName() + "].[" + colName + "]", ex);
+                }
                 col.set(record, javaVal);
             }
             return record;
