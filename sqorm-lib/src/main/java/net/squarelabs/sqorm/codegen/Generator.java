@@ -24,11 +24,20 @@ public class Generator {
         if(args.length != 4) {
             throw new RuntimeException("Invalid number of arguments!");
         }
-        String path = args[0];
+        String root = args[0];
         String packageName = args[1];
         String driver = args[2];
         String conString = args[3];
 
+        // Get package directory
+        String[] folders = packageName.split("\\.");
+        File path = new File(root);
+        for(String folder : folders) {
+            path = new File(path.getAbsolutePath(), folder);
+        }
+        path.mkdirs();
+
+        // Generate files
         Class.forName(driver);
         System.out.println("Connecting to database...");
         try(Connection con = DriverManager.getConnection(conString)) {
@@ -63,13 +72,11 @@ public class Generator {
 
         sb.append("package " + packageName + ";\n");
         sb.append("\n");
-        sb.append("import net.squarelabs.sqorm.codegen.Column;\n");
-        sb.append("\n");
         sb.append("import java.util.ArrayList;\n");
         sb.append("import java.util.List;\n");
         sb.append("\n");
         sb.append("@net.squarelabs.sqorm.annotation.Table(name = \"" + table.getName() + "\")\n");
-        sb.append("public class Table {\n");
+        sb.append("public class " + table.getName() + " {\n");
         sb.append("\n");
 
         // Private variables for column values
@@ -81,7 +88,7 @@ public class Generator {
         // Public accessors for column values
         for(Column col : table.getColumnChildren()) {
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
-            sb.append("    public String get" + col.getName() + " {\n");
+            sb.append("    public String get" + col.getName() + "() {\n");
             sb.append("        return " + col.getName() + ";\n");
             sb.append("    }\n");
             sb.append("\n");
