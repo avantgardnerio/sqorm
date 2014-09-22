@@ -8,15 +8,44 @@ import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
 import net.squarelabs.sqorm.schema.DbSchema;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class Generator {
 
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
+    public static void main(String[] args) throws Exception {
+        if(args.length != 4) {
+            throw new RuntimeException("Invalid number of arguments!");
+        }
+        String path = args[0];
+        String packageName = args[1];
+        String driver = args[2];
+        String conString = args[3];
+
+        Class.forName(driver);
+        System.out.println("Connecting to database...");
+        try(Connection con = DriverManager.getConnection(conString)) {
+            System.out.println("Loading schema...");
+            Collection<Table> tables = loadSchema(con);
+            for(Table table : tables) {
+                System.out.println("Generating " + table.getName() + ".java");
+                String java = generateTableSource(table, packageName);
+                File file = new File(path, table.getName() + ".java");
+                try(FileWriter fw = new FileWriter(file)) {
+                    try(BufferedWriter writer = new BufferedWriter(fw)) {
+                        writer.write(java);
+                    }
+                }
+            }
+        }
+        System.out.println("Code generation complete!");
     }
 
     public static Collection<Table> loadSchema(Connection con) throws SQLException {

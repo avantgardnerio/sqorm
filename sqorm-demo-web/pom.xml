@@ -53,7 +53,10 @@
                         <configuration>
                             <mainClass>net.squarelabs.sqorm.codegen.Generator</mainClass>
                             <arguments>
+                                <argument>${basedir}/target/generated-sources</argument>
                                 <argument>net.squarelabs.sqorm.demo</argument>
+                                <argument>com.mysql.jdbc.Driver</argument>
+                                <argument>jdbc:mysql://127.0.0.1/sqorm?allowMultiQueries=true&amp;user=sqorm&amp;password=sqorm</argument>
                             </arguments>
                         </configuration>
                     </execution>
