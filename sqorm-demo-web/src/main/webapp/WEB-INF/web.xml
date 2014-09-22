@@ -18,6 +18,7 @@
         <listener-class>net.squarelabs.sqorm.demo.StartupListener</listener-class>
     </listener>
 
+    <!--
     <context-param>
         <param-name>sql.driver</param-name>
         <param-value>com.mysql.jdbc.Driver</param-value>
@@ -25,5 +26,14 @@
     <context-param>
         <param-name>sql.connection.string</param-name>
         <param-value>jdbc:mysql://127.0.0.1/sqorm?allowMultiQueries=true&amp;user=sqorm&amp;password=sqorm</param-value>
+    </context-param>
+    -->
+    <context-param>
+        <param-name>sql.driver</param-name>
+        <param-value>org.postgresql.Driver</param-value>
+    </context-param>
+    <context-param>
+        <param-name>sql.connection.string</param-name>
+        <param-value>jdbc:postgresql://127.0.0.1/sqorm?user=sqorm&amp;password=sqorm</param-value>
     </context-param>
 </web-app>

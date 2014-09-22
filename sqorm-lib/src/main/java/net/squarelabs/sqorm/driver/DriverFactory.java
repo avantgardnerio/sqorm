@@ -11,7 +11,7 @@ public class DriverFactory {
         String dbName = metaData.getDatabaseProductName();
         switch(dbName) {
             case "PostgreSQL":
-                throw new RuntimeException("PostGreSQL not yet supported!");
+                return new PostGresDriver();
             case "MySQL":
                 return new MySqlDriver();
             case "Microsoft SQL Server":
