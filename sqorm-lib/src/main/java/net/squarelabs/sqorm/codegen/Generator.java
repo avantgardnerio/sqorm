@@ -74,6 +74,7 @@ public class Generator {
         sb.append("\n");
         sb.append("import java.util.ArrayList;\n");
         sb.append("import java.util.List;\n");
+        sb.append("import java.util.UUID;\n");
         sb.append("\n");
         sb.append("@net.squarelabs.sqorm.annotation.Table(name = \"" + table.getName() + "\")\n");
         sb.append("public class " + table.getName() + " {\n");
@@ -81,14 +82,14 @@ public class Generator {
 
         // Private variables for column values
         for(Column col : table.getColumnChildren()) {
-            String type = sqlToJava(col.getDataType());
+            String type = col.getDataType();
             sb.append("    private " + type + " " + col.getName() + ";\n");
         }
         sb.append("\n");
 
         // Public accessors for column values
         for(Column col : table.getColumnChildren()) {
-            String type = sqlToJava(col.getDataType());
+            String type = col.getDataType();
 
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
             sb.append("    public " + type + " get" + col.getName() + "() {\n");
@@ -107,21 +108,4 @@ public class Generator {
         return sb.toString();
     }
 
-    public static String sqlToJava(String sqlType) {
-
-        if("int".equals(sqlType)) {
-            return "int";
-        }
-        if("timestamp".equals(sqlType)) {
-            return "java.time.Instant";
-        }
-        if("tinyint".equals(sqlType)) {
-            return "byte";
-        }
-        if("varchar".equals(sqlType)) {
-            return "String";
-        }
-
-        throw new RuntimeException("Unknown type: " + sqlType);
-    }
 }

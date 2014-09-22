@@ -14,7 +14,10 @@ public class TypeConverter {
                 return value;
             }
         }
-        if(clazz == boolean.class) {
+        if(clazz == boolean.class || clazz == Boolean.class) {
+            if(value instanceof Boolean) {
+                return ((Boolean)value).booleanValue();
+            }
             if(value instanceof Long) {
                 return (long)value != 0;
             }

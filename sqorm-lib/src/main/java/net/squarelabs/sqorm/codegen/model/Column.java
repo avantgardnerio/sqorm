@@ -11,12 +11,12 @@ public class Column {
     private String tableName;
     private String dataType;
     private String defaultValue;
-    private String ordinal;
     private String description;
 
     private String foreignTableName;
     private String foreignColumnName;
 
+    private int ordinal;
     private Integer seed;
     private Integer scale;
     private Integer increment;
@@ -50,12 +50,12 @@ public class Column {
         this.columnName = name;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "identity")
+    @net.squarelabs.sqorm.annotation.Column(name = "is_identity")
     public boolean isIdentity() {
         return isIdentity;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "identity")
+    @net.squarelabs.sqorm.annotation.Column(name = "is_identity")
     public void setIdentity(boolean isIdentity) {
         this.isIdentity = isIdentity;
     }
@@ -100,22 +100,22 @@ public class Column {
         this.scale = scale;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "nullable")
+    @net.squarelabs.sqorm.annotation.Column(name = "is_nullable")
     public boolean isNullable() {
         return isNullable;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "nullable")
+    @net.squarelabs.sqorm.annotation.Column(name = "is_nullable")
     public void setNullable(boolean isNullable) {
         this.isNullable = isNullable;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "default_value")
+    @net.squarelabs.sqorm.annotation.Column(name = "column_default")
     public String getDefaultValue() {
         return defaultValue;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "default_value")
+    @net.squarelabs.sqorm.annotation.Column(name = "column_default")
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
@@ -160,13 +160,13 @@ public class Column {
         this.isArray = isArray;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "ordinal")
-    public String getOrdinal() {
+    @net.squarelabs.sqorm.annotation.Column(name = "ordinal_position")
+    public int getOrdinal() {
         return ordinal;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "ordinal")
-    public void setOrdinal(String ordinal) {
+    @net.squarelabs.sqorm.annotation.Column(name = "ordinal_position")
+    public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
     }
 
