@@ -54,6 +54,7 @@ In Progress
 -----------
 * POJO codegen
 * Fluent DataSet query language
+* Example Java + JS app to load graph and serialize to JSON
 
 TODO
 ----
@@ -63,6 +64,5 @@ TODO
 * Stored procedure support
 * Blob API
 * Ordered indexing
-* Example Java + JS app to load graph and serialize to JSON
 * JMX metrics
 * Swing data binding descriptors: List, Tree, Grid
