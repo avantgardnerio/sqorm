@@ -8,9 +8,9 @@ public @interface Association {
 
     String name() default "";
 
-    String primaryKey() default "";
+    String[] primaryKey();
 
-    String foreignKey() default "";
+    String[] foreignKey();
 
     boolean isForeignKey() default false;
 }

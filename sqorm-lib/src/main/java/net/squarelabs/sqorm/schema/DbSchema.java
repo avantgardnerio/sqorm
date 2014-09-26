@@ -84,9 +84,9 @@ public class DbSchema {
         for(Map.Entry<String,AssociationCache> entry : associations.entrySet()) {
             String relName = entry.getKey();
             AssociationCache ac = entry.getValue();
-            List<ColumnSchema> primaryCols = ac.parentTable.getColumns(ac.association.primaryKey().split(","));
+            List<ColumnSchema> primaryCols = ac.parentTable.getColumns(ac.association.primaryKey());
             IndexSchema primaryIdx = ac.parentTable.ensureIndex(primaryCols);
-            List<ColumnSchema> foreignCols = ac.childTable.getColumns(ac.association.foreignKey().split(","));
+            List<ColumnSchema> foreignCols = ac.childTable.getColumns(ac.association.foreignKey());
             IndexSchema foreignIdx = ac.childTable.ensureIndex(foreignCols);
             RelationSchema rel = new RelationSchema(relName, ac.parentTable, ac.childTable, primaryIdx, foreignIdx,
                     ac.parentSettter, ac.childrenSettter);
