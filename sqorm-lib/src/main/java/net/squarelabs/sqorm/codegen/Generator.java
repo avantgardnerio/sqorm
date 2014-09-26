@@ -1,6 +1,8 @@
 package net.squarelabs.sqorm.codegen;
 
+import com.google.common.base.Joiner;
 import net.squarelabs.sqorm.codegen.model.Relation;
+import net.squarelabs.sqorm.codegen.model.RelationField;
 import net.squarelabs.sqorm.sql.QueryCache;
 import net.squarelabs.sqorm.codegen.model.Column;
 import net.squarelabs.sqorm.codegen.model.Table;
@@ -16,8 +18,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Generator {
 
@@ -111,11 +115,17 @@ public class Generator {
 
         // Child relationships
         for(Relation rel : table.getChildRelations()) {
+            List<String> primaryFieldNames = rel.getColumnChildren().stream()
+                    .sorted((a,b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
+                    .map(t -> t.getPrimaryColumnName())
+                    .collect(Collectors.toList());
+            List<String> foreignFieldNames = rel.getColumnChildren().stream()
+                    .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
+                    .map(t -> t.getForeignColumnName())
+                    .collect(Collectors.toList());
             String annotation = String.format(
                     "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
-                    rel.getName(),
-                    rel.getColumnChildren().toString(), // TODO: pull parent names and order by ordinal
-                    rel.getColumnChildren().toString());// TODO: pull child names and order by ordinal
+                    rel.getName(), Joiner.on(",").join(primaryFieldNames), Joiner.on(",").join(foreignFieldNames));
 
             sb.append("\t" + annotation + "\n");
             sb.append("    public Collection<" + rel.getForeignTableName() + "> get" + rel.getForeignTableName() + "Children() {\n");
