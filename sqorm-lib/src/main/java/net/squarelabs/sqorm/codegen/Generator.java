@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Generator {
 
@@ -115,14 +116,10 @@ public class Generator {
 
         // Child relationships
         for(Relation rel : table.getChildRelations()) {
-            List<String> primaryFieldNames = rel.getColumnChildren().stream()
-                    .sorted((a,b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
-                    .map(t -> t.getPrimaryColumnName())
-                    .collect(Collectors.toList());
-            List<String> foreignFieldNames = rel.getColumnChildren().stream()
-                    .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
-                    .map(t -> t.getForeignColumnName())
-                    .collect(Collectors.toList());
+            Stream<RelationField> fields = rel.getColumnChildren().stream()
+                    .sorted((a,b) -> a.getOrdinalPosition() - b.getOrdinalPosition());
+            List<String> primaryFieldNames = fields.map(t -> t.getPrimaryColumnName()).collect(Collectors.toList());
+            List<String> foreignFieldNames = fields.map(t -> t.getForeignColumnName()).collect(Collectors.toList());
             String annotation = String.format(
                     "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
                     rel.getName(), Joiner.on(",").join(primaryFieldNames), Joiner.on(",").join(foreignFieldNames));
