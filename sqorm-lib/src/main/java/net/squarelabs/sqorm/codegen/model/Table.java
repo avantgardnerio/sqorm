@@ -14,6 +14,9 @@ public class Table {
 
     private Collection<Column> columnChildren = new ArrayList<>();
 
+    private Collection<Relation> parentRelations = new ArrayList<>();
+    private Collection<Relation> childRelations = new ArrayList<>();
+
     @net.squarelabs.sqorm.annotation.Column(name="table_name", pkOrdinal = 0)
     public String getName() {
         return name;
@@ -46,6 +49,26 @@ public class Table {
     @Association(name = "TableColumnRel", primaryKey = "table_name", foreignKey = "table_name", isForeignKey = false)
     public void setColumnChildren(Collection<Column> val) {
         columnChildren = val;
+    }
+
+    @Association(name = "TableParentRel", primaryKey = "table_name", foreignKey = "primary_table", isForeignKey = false)
+    public Collection<Relation> getParentRelations() {
+        return parentRelations;
+    }
+
+    @Association(name = "TableParentRel", primaryKey = "table_name", foreignKey = "primary_table", isForeignKey = false)
+    public void setParentRelations(Collection<Relation> val) {
+        parentRelations = val;
+    }
+
+    @Association(name = "TableChildRel", primaryKey = "table_name", foreignKey = "foreign_table", isForeignKey = false)
+    public Collection<Relation> getChildRelations() {
+        return childRelations;
+    }
+
+    @Association(name = "TableChildRel", primaryKey = "table_name", foreignKey = "foreign_table", isForeignKey = false)
+    public void setChildRelations(Collection<Relation> val) {
+        childRelations = val;
     }
 
 }

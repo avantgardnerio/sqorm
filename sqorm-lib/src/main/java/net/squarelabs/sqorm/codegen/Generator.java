@@ -1,5 +1,6 @@
 package net.squarelabs.sqorm.codegen;
 
+import net.squarelabs.sqorm.codegen.model.Relation;
 import net.squarelabs.sqorm.sql.QueryCache;
 import net.squarelabs.sqorm.codegen.model.Column;
 import net.squarelabs.sqorm.codegen.model.Table;
@@ -101,6 +102,31 @@ public class Generator {
             sb.append("        this." + col.getName() + " = val;\n");
             sb.append("    }\n");
             sb.append("\n");
+        }
+
+        // Parent relationships
+        for(Relation rel : table.getParentRelations()) {
+
+        }
+
+        // Child relationships
+        for(Relation rel : table.getChildRelations()) {
+            String annotation = String.format(
+                    "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
+                    rel.getName(),
+                    rel.getColumnChildren().toString(), // TODO: pull parent names and order by ordinal
+                    rel.getColumnChildren().toString());// TODO: pull child names and order by ordinal
+
+            sb.append("\t" + annotation + "\n");
+            sb.append("    public Collection<" + rel.getForeignTableName() + "> get" + rel.getForeignTableName() + "Children() {\n");
+            sb.append("        return " + rel.getForeignTableName() + "Children;\n");
+            sb.append("    }\n");
+            sb.append("\n");
+
+            sb.append("\t" + annotation + "\n");
+            sb.append("    public void set" + rel.getForeignTableName() + "(Collection<" + rel.getForeignTableName() + "> val) {\n");
+            sb.append("        " + rel.getForeignTableName() + "Children = val;\n");
+            sb.append("    }\n");
         }
 
         // Cleanup
