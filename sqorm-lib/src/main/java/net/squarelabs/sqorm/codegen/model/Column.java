@@ -13,9 +13,6 @@ public class Column {
     private String defaultValue;
     private String description;
 
-    private String foreignTableName;
-    private String foreignColumnName;
-
     private int ordinal;
     private Integer seed;
     private Integer scale;
@@ -178,26 +175,6 @@ public class Column {
     @net.squarelabs.sqorm.annotation.Column(name = "description")
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "foreign_table")
-    public String getForeignTableName() {
-        return foreignTableName;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "foreign_table")
-    public void setForeignTableName(String foreignTableName) {
-        this.foreignTableName = foreignTableName;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "foreign_column")
-    public String getForeignColumnName() {
-        return foreignColumnName;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "foreign_column")
-    public void setForeignColumnName(String foreignColumnName) {
-        this.foreignColumnName = foreignColumnName;
     }
 
     // ------------------------------------- Parent Associations ------------------------------------------------------
