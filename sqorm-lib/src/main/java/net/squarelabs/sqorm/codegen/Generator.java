@@ -100,6 +100,7 @@ public class Generator {
             sb.append("    public void set" + col.getName() + "(" + type + " val) {\n");
             sb.append("        this." + col.getName() + " = val;\n");
             sb.append("    }\n");
+            sb.append("\n");
         }
 
         // Cleanup
