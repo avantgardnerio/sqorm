@@ -52,7 +52,7 @@ order by tab.table_name, col.ordinal_position
 -- Relations
 select
   'net.squarelabs.sqorm.codegen.model.Relation' as classpath,
-  rel.constraint_name as name,
+  rel.constraint_name,
   pri.table_name as primary_table,
   fr.table_name as foreign_table
 from information_schema.referential_constraints rel
