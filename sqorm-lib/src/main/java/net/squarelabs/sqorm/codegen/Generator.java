@@ -118,8 +118,8 @@ public class Generator {
         for(Relation rel : table.getChildRelations()) {
             Stream<RelationField> fields = rel.getColumnChildren().stream()
                     .sorted((a,b) -> a.getOrdinalPosition() - b.getOrdinalPosition());
-            List<String> primaryFieldNames = fields.map(t -> t.getPrimaryColumnName()).collect(Collectors.toList());
-            List<String> foreignFieldNames = fields.map(t -> t.getForeignColumnName()).collect(Collectors.toList());
+            List<String> primaryFieldNames = fields.map(RelationField::getPrimaryColumnName).collect(Collectors.toList());
+            List<String> foreignFieldNames = fields.map(RelationField::getForeignColumnName).collect(Collectors.toList());
             String annotation = String.format(
                     "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
                     rel.getName(), Joiner.on(",").join(primaryFieldNames), Joiner.on(",").join(foreignFieldNames));
