@@ -76,6 +76,7 @@ public class Generator {
     }
 
     public static String generateTableSource(Table table, String packageName) {
+        String className = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName());
         StringBuilder sb = new StringBuilder();
 
         sb.append("package " + packageName + ";\n");
@@ -88,7 +89,7 @@ public class Generator {
         sb.append("import net.squarelabs.sqorm.annotation.Association;\n");
         sb.append("\n");
         sb.append("@net.squarelabs.sqorm.annotation.Table(name = \"" + table.getName() + "\")\n");
-        sb.append("public class " + table.getName() + " {\n");
+        sb.append("public class " + className + " {\n");
         sb.append("\n");
 
         // Private variables for column values
@@ -133,15 +134,18 @@ public class Generator {
                     "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
                     rel.getName(), Joiner.on(",").join(primaryFieldNames), Joiner.on(",").join(foreignFieldNames));
 
+            String foreignClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getForeignTableName());
+            String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getForeignTableName());
+
             sb.append("\t" + annotation + "\n");
-            sb.append("    public Collection<" + rel.getForeignTableName() + "> get" + rel.getForeignTableName() + "Children() {\n");
-            sb.append("        return " + rel.getForeignTableName() + "Children;\n");
+            sb.append("    public Collection<" + foreignClassName + "> get" + foreignClassName + "Children() {\n");
+            sb.append("        return " + varName + "Children;\n");
             sb.append("    }\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
-            sb.append("    public void set" + rel.getForeignTableName() + "(Collection<" + rel.getForeignTableName() + "> val) {\n");
-            sb.append("        " + rel.getForeignTableName() + "Children = val;\n");
+            sb.append("    public void set" + foreignClassName + "(Collection<" + foreignClassName + "> val) {\n");
+            sb.append("        " + varName + "Children = val;\n");
             sb.append("    }\n");
         }
 
