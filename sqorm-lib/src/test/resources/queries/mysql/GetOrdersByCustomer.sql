@@ -1,13 +1,17 @@
 select
   'net.squarelabs.sqorm.model.Customer' as classpath,
-  c.*
+  hex(c.`CustomerId`) as `CustomerId`,
+  c.name,
+  c.version
 from `Customer` c
 where c.`CustomerId`=unhex(@CustomerId)
 ;
 
 select
   'net.squarelabs.sqorm.model.Order' as classpath,
-  o.*
+  o.order_id,
+  hex(o.customer_id) as customer_id,
+  o.version
 from `Customer` c
 inner join `Orders` o
   on o.customer_id=c.`CustomerId`

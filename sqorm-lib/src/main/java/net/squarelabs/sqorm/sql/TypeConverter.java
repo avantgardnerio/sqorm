@@ -1,5 +1,6 @@
 package net.squarelabs.sqorm.sql;
 
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -29,7 +30,16 @@ public class TypeConverter {
                 return obj;
             }
             if(obj instanceof String) {
-                return UUID.fromString(rs.getString(index));
+                String str = (String)obj;
+                if(!str.contains("-")) {
+                    str = str.substring(0, 8) + "-"
+                            + str.substring(8, 12) + "-"
+                            + str.substring(12, 16) + "-"
+                            + str.substring(16, 20) + "-"
+                            + str.substring(20, 32);
+                }
+                UUID uuid = UUID.fromString(str);
+                return uuid;
             }
             if(obj instanceof byte[]) {
                 return UUID.nameUUIDFromBytes((byte[])obj);

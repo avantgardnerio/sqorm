@@ -1,8 +1,12 @@
 package net.squarelabs.sqorm.driver;
 
 import net.squarelabs.sqorm.schema.ColumnSchema;
+import org.apache.commons.io.HexDump;
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.HexEncoder;
 
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +31,9 @@ public class MySqlDriver extends DbDriver {
     @Override
     public Object javaToSql(Object value) {
         if (value instanceof UUID) {
-            return value.toString().replace("-", "");
+            UUID uuid = (UUID)value;
+            String ret = uuid.toString().replace("-", "");
+            return ret;
         }
         return super.javaToSql(value);
     }
