@@ -13,6 +13,14 @@ CREATE TABLE `Orders` (
   FOREIGN KEY (`customer_id`) REFERENCES `Customer` (`CustomerId`)
 );
 
+CREATE TABLE `OrderDetails` (
+  `OrderDetailsId` INT NOT NULL AUTO_INCREMENT,
+  `order_id`       INT NOT NULL,
+  `version`        INT NOT NULL,
+  PRIMARY KEY (`OrderDetailsId`),
+  FOREIGN KEY (`order_id`) REFERENCES `Orders` (`order_id`)
+);
+
 CREATE TABLE `row` (
   `RowId`   INT         NOT NULL,
   `Name`    VARCHAR(50) NOT NULL,

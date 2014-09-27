@@ -2,7 +2,7 @@ select
   'net.squarelabs.sqorm.model.Customer' as classpath,
   c.*
 from customer c
-where c.customer_id=@CustomerId
+where c.[CustomerId]=@CustomerId
 ;
 
 select
@@ -10,8 +10,8 @@ select
   o.*
 from customer c
 inner join orders o
-  on o.customer_id=c.customer_id
-where c.customer_id=@CustomerId
+  on o.customer_id=c.[CustomerId]
+where c.[CustomerId]=@CustomerId
 ;
 
 select
@@ -19,8 +19,8 @@ select
   od.*
 from customer c
 inner join orders o
-  on o.customer_id=c.customer_id
-inner join `OrderDetails` od
-  on od.`OrderId`=o.`OrderId`
-where c.customer_id=@CustomerId
+  on o.customer_id=c.[CustomerId]
+inner join [OrderDetails] od
+  on od.order_id=o.order_id
+where c.[CustomerId]=@CustomerId
 ;

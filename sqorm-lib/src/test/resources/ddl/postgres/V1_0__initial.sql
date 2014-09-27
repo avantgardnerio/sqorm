@@ -12,6 +12,14 @@ CREATE TABLE "Orders" (
   FOREIGN KEY ("customer_id") REFERENCES "Customer" ("CustomerId")
 );
 
+CREATE TABLE "OrderDetails" (
+  "OrderDetailsId" SERIAL,
+  "order_id"       INT NOT NULL,
+  "version"        INT NOT NULL,
+  PRIMARY KEY ("order_id"),
+  FOREIGN KEY ("order_id") REFERENCES "Orders" ("order_id")
+);
+
 CREATE TABLE "row" (
   "RowId"   INT         NOT NULL,
   "Name"    VARCHAR(50) NOT NULL,
