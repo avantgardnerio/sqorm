@@ -29,7 +29,7 @@ public class MySqlDriver extends DbDriver {
             bb.putLong(uuid.getLeastSignificantBits());
             return bb.array();
         }
-        return value;
+        return super.javaToSql(value);
     }
 
 }

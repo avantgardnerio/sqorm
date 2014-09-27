@@ -23,7 +23,7 @@ public class MsSqlDriver extends DbDriver {
         if (value instanceof UUID) {
             return value.toString();
         }
-        return value;
+        return super.javaToSql(value);
     }
 
     @Override
