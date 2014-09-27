@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 public class Generator {
 
     public static void main(String[] args) throws Exception {
-        if(args.length != 4) {
+        if (args.length != 4) {
             throw new RuntimeException("Invalid number of arguments!");
         }
         String root = args[0];
@@ -38,7 +38,7 @@ public class Generator {
         // Get package directory
         String[] folders = packageName.split("\\.");
         File path = new File(root);
-        for(String folder : folders) {
+        for (String folder : folders) {
             path = new File(path.getAbsolutePath(), folder);
         }
         path.mkdirs();
@@ -46,15 +46,15 @@ public class Generator {
         // Generate files
         Class.forName(driver);
         System.out.println("Connecting to database...");
-        try(Connection con = DriverManager.getConnection(conString)) {
+        try (Connection con = DriverManager.getConnection(conString)) {
             System.out.println("Loading schema...");
             Collection<Table> tables = loadSchema(con);
-            for(Table table : tables) {
+            for (Table table : tables) {
                 System.out.println("Generating " + table.getName() + ".java");
                 String java = generateTableSource(table, packageName);
                 File file = new File(path, table.getName() + ".java");
-                try(FileWriter fw = new FileWriter(file)) {
-                    try(BufferedWriter writer = new BufferedWriter(fw)) {
+                try (FileWriter fw = new FileWriter(file)) {
+                    try (BufferedWriter writer = new BufferedWriter(fw)) {
                         writer.write(java);
                     }
                 }
@@ -87,14 +87,14 @@ public class Generator {
         sb.append("\n");
 
         // Private variables for column values
-        for(Column col : table.getColumnChildren()) {
+        for (Column col : table.getColumnChildren()) {
             String type = col.getDataType();
             sb.append("    private " + type + " " + col.getName() + ";\n");
         }
         sb.append("\n");
 
         // Public accessors for column values
-        for(Column col : table.getColumnChildren()) {
+        for (Column col : table.getColumnChildren()) {
             String type = col.getDataType();
 
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
@@ -110,16 +110,20 @@ public class Generator {
         }
 
         // Parent relationships
-        for(Relation rel : table.getParentRelations()) {
+        for (Relation rel : table.getParentRelations()) {
 
         }
 
         // Child relationships
-        for(Relation rel : table.getChildRelations()) {
-            Stream<RelationField> fields = rel.getColumnChildren().stream()
-                    .sorted((a,b) -> a.getOrdinalPosition() - b.getOrdinalPosition());
-            List<String> primaryFieldNames = fields.map(RelationField::getPrimaryColumnName).collect(Collectors.toList());
-            List<String> foreignFieldNames = fields.map(RelationField::getForeignColumnName).collect(Collectors.toList());
+        for (Relation rel : table.getChildRelations()) {
+            List<String> primaryFieldNames = rel.getColumnChildren().stream()
+                    .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
+                    .map(RelationField::getPrimaryColumnName)
+                    .collect(Collectors.toList());
+            List<String> foreignFieldNames = rel.getColumnChildren().stream()
+                    .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
+                    .map(RelationField::getForeignColumnName)
+                    .collect(Collectors.toList());
             String annotation = String.format(
                     "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
                     rel.getName(), Joiner.on(",").join(primaryFieldNames), Joiner.on(",").join(foreignFieldNames));

@@ -65,7 +65,7 @@ public class TableSchema {
     }
 
     public ColumnSchema getColumn(String name) {
-        return columns.get(name);
+        return columns.get(name.toLowerCase());
     }
 
     public List<ColumnSchema> getColumns(String[] colNames) {
@@ -247,7 +247,7 @@ public class TableSchema {
         for (AnnotationCache ac : annos.values()) {
             boolean isVersion = StringUtils.equals(ac.name, versionCol);
             ColumnSchema col = new ColumnSchema(ac.name, ac.getter, ac.setter, ac.pkOrdinal, isVersion);
-            columns.put(ac.name, col);
+            columns.put(ac.name.toLowerCase(), col);
         }
         return columns;
     }

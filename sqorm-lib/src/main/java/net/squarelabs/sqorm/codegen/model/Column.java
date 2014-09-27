@@ -67,32 +67,32 @@ public class Column {
         this.dataType = dataType;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "max_length")
+    @net.squarelabs.sqorm.annotation.Column(name = "character_maximum_length")
     public Integer getMaxLength() {
         return maxLength;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "max_length")
+    @net.squarelabs.sqorm.annotation.Column(name = "character_maximum_length")
     public void setMaxLength(Integer maxLength) {
         this.maxLength = maxLength;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "precision")
+    @net.squarelabs.sqorm.annotation.Column(name = "numeric_precision")
     public Integer getPrecision() {
         return precision;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "precision")
+    @net.squarelabs.sqorm.annotation.Column(name = "numeric_precision")
     public void setPrecision(Integer precision) {
         this.precision = precision;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "scale")
+    @net.squarelabs.sqorm.annotation.Column(name = "numeric_scale")
     public Integer getScale() {
         return scale;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "scale")
+    @net.squarelabs.sqorm.annotation.Column(name = "numeric_scale")
     public void setScale(Integer scale) {
         this.scale = scale;
     }
@@ -137,12 +137,12 @@ public class Column {
         this.increment = increment;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "primary_key")
+    @net.squarelabs.sqorm.annotation.Column(name = "column_key")
     public boolean isPrimaryKey() {
         return isPrimaryKey;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "primary_key")
+    @net.squarelabs.sqorm.annotation.Column(name = "column_key")
     public void setPrimaryKey(boolean isPrimaryKey) {
         this.isPrimaryKey = isPrimaryKey;
     }

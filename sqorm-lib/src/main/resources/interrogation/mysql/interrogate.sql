@@ -1,27 +1,24 @@
 -- Tables
 SELECT
   'net.squarelabs.sqorm.codegen.model.Table' AS `classpath`,
-  table_name                                 AS `table_name`
+  table_name
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = 'sqorm';
 
 -- Columns
 SELECT
   'net.squarelabs.sqorm.codegen.model.Column' AS `classpath`,
-  table_name                                  AS `table_name`,
-  column_name                                 AS `column_name`,
-  data_type                                   AS `data_type`,
-  character_maximum_length                    AS `max_length`,
+  table_name,
+  column_name,
+  data_type,
+  character_maximum_length,
   (CASE WHEN is_nullable = 'YES' THEN TRUE
-   ELSE FALSE END)                            AS `nullable`,
-  0                                           AS `identity`,
-  numeric_precision                           AS `precision`,
-  numeric_scale                               AS `scale`,
-  column_default                              AS `default_value`,
-  NULL                                        AS `seed`,
-  NULL                                        AS `increment`,
+   ELSE FALSE END)                            AS `is_nullable`,
+  numeric_precision,
+  numeric_scale,
+  column_default,
   (CASE WHEN column_key = 'PRI' THEN 1
-   ELSE 0 END)                                AS `primary_key`
+   ELSE 0 END)                                AS `column_key`
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE table_schema = 'sqorm';
 
