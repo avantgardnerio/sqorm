@@ -52,8 +52,6 @@ Done
 
 In Progress
 -----------
-* MS-SQL support
-* PostGres support
 * POJO codegen
 * Fluent DataSet query language
 * Example Java + JS app to load graph and serialize to JSON
