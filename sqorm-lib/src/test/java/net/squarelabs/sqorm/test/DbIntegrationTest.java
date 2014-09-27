@@ -6,7 +6,6 @@ import net.squarelabs.sqorm.driver.DriverFactory;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.sql.DataSource;
@@ -14,7 +13,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
 
-@RunWith(Parameterized.class)
 public class DbIntegrationTest implements AutoCloseable {
 
     private final BasicDataSource pool;

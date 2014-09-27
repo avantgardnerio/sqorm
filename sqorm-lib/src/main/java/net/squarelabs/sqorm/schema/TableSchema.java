@@ -1,19 +1,18 @@
 package net.squarelabs.sqorm.schema;
 
-import com.google.common.base.Joiner;
-import com.sun.xml.internal.ws.developer.SerializationFeature;
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.sql.MockStatement;
-import net.squarelabs.sqorm.sql.TypeConverter;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
 import java.lang.reflect.Method;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 

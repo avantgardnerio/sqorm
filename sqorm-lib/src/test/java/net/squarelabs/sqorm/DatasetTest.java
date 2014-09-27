@@ -10,12 +10,15 @@ import net.squarelabs.sqorm.sql.QueryCache;
 import net.squarelabs.sqorm.test.DbIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@RunWith(Parameterized.class)
 public class DatasetTest extends DbIntegrationTest {
 
     public DatasetTest(String driverClass, String url, String dropUrl) {

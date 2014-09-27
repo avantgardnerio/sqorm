@@ -4,13 +4,15 @@ import net.squarelabs.sqorm.codegen.Generator;
 import net.squarelabs.sqorm.codegen.model.Column;
 import net.squarelabs.sqorm.codegen.model.Table;
 import net.squarelabs.sqorm.test.DbIntegrationTest;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.sql.Connection;
 import java.util.Collection;
 
+@RunWith(Parameterized.class)
 public class GeneratorTest extends DbIntegrationTest {
 
     public GeneratorTest(String driverClass, String url, String dropUrl) {
