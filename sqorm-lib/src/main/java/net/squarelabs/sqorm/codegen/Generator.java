@@ -1,5 +1,6 @@
 package net.squarelabs.sqorm.codegen;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 import net.squarelabs.sqorm.codegen.model.Relation;
 import net.squarelabs.sqorm.codegen.model.RelationField;
@@ -50,9 +51,10 @@ public class Generator {
             System.out.println("Loading schema...");
             Collection<Table> tables = loadSchema(con);
             for (Table table : tables) {
-                System.out.println("Generating " + table.getName() + ".java");
+                String fileName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName()) + ".java";
+                System.out.println("Generating " + fileName);
                 String java = generateTableSource(table, packageName);
-                File file = new File(path, table.getName() + ".java");
+                File file = new File(path, fileName);
                 try (FileWriter fw = new FileWriter(file)) {
                     try (BufferedWriter writer = new BufferedWriter(fw)) {
                         writer.write(java);
