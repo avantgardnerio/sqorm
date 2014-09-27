@@ -12,6 +12,9 @@ public class Relation {
     private String primaryTableName;
     private String foreignTableName;
 
+    private Table primaryTable;
+    private Table foreignTable;
+
     private Collection<RelationField> fieldChildren = new ArrayList<>();
 
     @net.squarelabs.sqorm.annotation.Column(name = "constraint_name", pkOrdinal = 0)
@@ -42,6 +45,28 @@ public class Relation {
     @net.squarelabs.sqorm.annotation.Column(name = "foreign_table")
     public void setForeignTableName(String foreignTableName) {
         this.foreignTableName = foreignTableName;
+    }
+
+    // ------------------------------------- Parent Associations ------------------------------------------------------
+
+    @Association(name = "TableChildRel", primaryKey = "table_name", foreignKey = "foreign_table", isForeignKey = true)
+    public Table getForeignTable() {
+        return foreignTable;
+    }
+
+    @Association(name = "TableChildRel", primaryKey = "table_name", foreignKey = "foreign_table", isForeignKey = true)
+    public void setForeignTable(Table foreignTable) {
+        this.foreignTable = foreignTable;
+    }
+
+    @Association(name = "TableParentRel", primaryKey = "table_name", foreignKey = "primary_table", isForeignKey = true)
+    public Table getPrimaryTable() {
+        return primaryTable;
+    }
+
+    @Association(name = "TableParentRel", primaryKey = "table_name", foreignKey = "primary_table", isForeignKey = true)
+    public void setPrimaryTable(Table primaryTable) {
+        this.primaryTable = primaryTable;
     }
 
     // ------------------------------------- Child Associations -------------------------------------------------------

@@ -1,5 +1,9 @@
 package net.squarelabs.sqorm.codegen.model;
 
+import net.squarelabs.sqorm.annotation.Association;
+
+import java.util.Collection;
+
 @net.squarelabs.sqorm.annotation.Table(name = "RelationField")
 public class RelationField {
 
@@ -8,6 +12,7 @@ public class RelationField {
     private String primaryColumnName;
     private String foreignColumnName;
 
+    private Relation relationParent;
 
     @net.squarelabs.sqorm.annotation.Column(name = "constraint_name", pkOrdinal = 0)
     public String getRelationName() {
@@ -47,6 +52,18 @@ public class RelationField {
     @net.squarelabs.sqorm.annotation.Column(name = "foreign_column")
     public void setForeignColumnName(String foreignColumnName) {
         this.foreignColumnName = foreignColumnName;
+    }
+
+    // ------------------------------------- Parent Associations ------------------------------------------------------
+
+    @Association(name = "RelationFieldRel", primaryKey = "constraint_name", foreignKey = "constraint_name", isForeignKey = true)
+    public Relation getRelationParent() {
+        return relationParent;
+    }
+
+    @Association(name = "RelationFieldRel", primaryKey = "constraint_name", foreignKey = "constraint_name", isForeignKey = true)
+    public void setRelationParent(Relation relationParent) {
+        this.relationParent = relationParent;
     }
 
 }
