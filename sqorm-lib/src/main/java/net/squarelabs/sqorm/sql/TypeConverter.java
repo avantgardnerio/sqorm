@@ -16,23 +16,16 @@ public class TypeConverter {
      */
     public static Object javaToSql(Object value) {
         if (value instanceof UUID) {
-            UUID uuid = (UUID) value;
-            ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-            bb.putLong(uuid.getMostSignificantBits());
-            bb.putLong(uuid.getLeastSignificantBits());
-            return bb.array();
+            return value.toString();
         }
 
         return value;
     }
 
     public static Object javaToSql(Class<?> clazz, Object value) {
+        // PostGreSQL: http://crafted-software.blogspot.com/2013/03/uuid-values-from-jdbc-to-postgres.html
         if (clazz == UUID.class) {
-            UUID uuid = (UUID) value;
-            ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-            bb.putLong(uuid.getMostSignificantBits());
-            bb.putLong(uuid.getLeastSignificantBits());
-            return bb.array();
+            return value.toString();
         }
 
         return value;

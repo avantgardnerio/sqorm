@@ -13,10 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -166,17 +163,21 @@ public class TableSchema {
         try {
             int idx = 1;
             for (ColumnSchema col : updateColumns.values()) {
-                Object javaVal = col.get(record);
-                Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
-                stmt.setObject(idx++, sqlVal);
+                idx = setParm(stmt, record, col, idx);
             }
             for (ColumnSchema col : idColumns) {
-                Object val = col.get(record);
-                stmt.setObject(idx++, val);
+                idx = setParm(stmt, record, col, idx);
             }
         } catch (Exception ex) {
             throw new RuntimeException("Error preparing SQL parameters!", ex);
         }
+    }
+
+    private int setParm(PreparedStatement stmt, Object record, ColumnSchema col, int idx) throws SQLException {
+        Object javaVal = col.get(record);
+        Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
+        stmt.setObject(idx++, sqlVal);
+        return idx;
     }
 
     public void insert(Connection con, Object record) {
