@@ -38,8 +38,8 @@ public class DatasetTest extends DbIntegrationTest {
                 UUID bid = UUID.randomUUID();
                 per.persist(new Customer(aid, "alice"));
                 per.persist(new Customer(bid, "bob"));
-                per.persist(new Order(1, aid));
-                per.persist(new Order(2, bid));
+                per.persist(new Order(aid));
+                per.persist(new Order(bid));
             }
 
             // Select from tables

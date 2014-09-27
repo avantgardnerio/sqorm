@@ -21,6 +21,7 @@ public class TableSchema {
     // Reflection cache
     private final List<IndexSchema> indices = new ArrayList<>();
     private final SortedMap<String, ColumnSchema> columns;
+    private final SortedMap<String, ColumnSchema> insertColumns;
     private final SortedMap<String, ColumnSchema> updateColumns;
     private final ColumnSchema versionCol;
     private final List<ColumnSchema> idColumns;
@@ -47,11 +48,12 @@ public class TableSchema {
         columns = parseAnnotations(clazz);
         versionCol = findVersionCol(columns);
         idColumns = findIdCols(columns);
+        insertColumns = findInsertCols(columns);
         updateColumns = findUpdateCols(columns, idColumns);
         primaryKey = ensureIndex(findPk(columns));
 
         // Write queries
-        insertQuery = writeInsertQuery(columns, driver, tableName);
+        insertQuery = writeInsertQuery(insertColumns, driver, tableName);
         updateQuery = writeUpdateQuery(updateColumns, driver, tableName, idColumns);
     }
 
@@ -152,6 +154,9 @@ public class TableSchema {
             int i = 1;
             for (Map.Entry<String, ColumnSchema> entry : columns.entrySet()) {
                 ColumnSchema col = entry.getValue();
+                if(col.isAutoIncrement()) {
+                    continue; // Don't insert values in auto_increment columns
+                }
                 Object javaVal = col.get(record);
                 try {
                     Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
@@ -176,6 +181,16 @@ public class TableSchema {
         SortedMap<String, ColumnSchema> updateCols = new TreeMap<>(columns);
         idColumns.forEach(col -> updateCols.remove(col.getName()));
         return updateCols;
+    }
+
+    private static SortedMap<String, ColumnSchema> findInsertCols(Map<String, ColumnSchema> columns) {
+        SortedMap<String, ColumnSchema> insertCols = new TreeMap<>();
+        for(ColumnSchema col : columns.values()) {
+            if(!col.isAutoIncrement()) {
+                insertCols.put(col.getName(), col);
+            }
+        }
+        return insertCols;
     }
 
     private static List<ColumnSchema> findIdCols(Map<String, ColumnSchema> columns) {
@@ -247,6 +262,7 @@ public class TableSchema {
             } else {
                 ac.getter = method;
             }
+            ac.autoIncrement = ano.autoIncrement();
             ac.pkOrdinal = ano.pkOrdinal();
             if (ano.isVersion()) {
                 versionCol = ac.name;
@@ -257,7 +273,7 @@ public class TableSchema {
         SortedMap<String, ColumnSchema> columns = new TreeMap<>();
         for (AnnotationCache ac : annos.values()) {
             boolean isVersion = StringUtils.equals(ac.name, versionCol);
-            ColumnSchema col = new ColumnSchema(ac.name, ac.getter, ac.setter, ac.pkOrdinal, isVersion);
+            ColumnSchema col = new ColumnSchema(ac.name, ac.getter, ac.setter, ac.pkOrdinal, isVersion, ac.autoIncrement);
             columns.put(ac.name.toLowerCase(), col);
         }
         return columns;
@@ -294,6 +310,7 @@ public class TableSchema {
         public Method getter;
         public Method setter;
         public int pkOrdinal;
+        public boolean autoIncrement;
 
         public AnnotationCache(String name) {
             this.name = name;

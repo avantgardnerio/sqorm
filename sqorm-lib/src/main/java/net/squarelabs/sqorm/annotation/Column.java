@@ -14,4 +14,6 @@ public @interface Column {
 
     boolean isVersion() default false;
 
+    boolean autoIncrement() default false;
+
 }

@@ -16,17 +16,16 @@ public class Order {
 
     }
 
-    public Order(int orderId, UUID customerId) {
-        this.orderId = orderId;
+    public Order(UUID customerId) {
         this.customerId = customerId;
     }
 
-    @Column(name="order_id", pkOrdinal = 0)
+    @Column(name="order_id", autoIncrement = true, pkOrdinal = 0)
     public int getOrderId() {
         return orderId;
     }
 
-    @Column(name="order_id", pkOrdinal = 0)
+    @Column(name="order_id", autoIncrement = true, pkOrdinal = 0)
     public void setOrderId(int orderId) {
         this.orderId = orderId;
     }

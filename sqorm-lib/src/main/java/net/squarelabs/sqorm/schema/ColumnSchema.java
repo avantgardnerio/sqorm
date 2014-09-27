@@ -12,7 +12,9 @@ public class ColumnSchema {
     private final int pkOrdinal;
     private final boolean isVersion;
 
-    public ColumnSchema(String name, Method getter, Method setter, int pkOrdinal, boolean isVersion) {
+    private final boolean autoIncrement;
+
+    public ColumnSchema(String name, Method getter, Method setter, int pkOrdinal, boolean isVersion, boolean autoIncrement) {
         if(getter == null) {
             throw new RuntimeException("No getter for column: " + name);
         }
@@ -22,7 +24,12 @@ public class ColumnSchema {
         this.setter = setter;
         this.pkOrdinal = pkOrdinal;
         this.isVersion = isVersion;
+        this.autoIncrement = autoIncrement;
         this.type = getter.getReturnType();
+    }
+
+    public boolean isAutoIncrement() {
+        return autoIncrement;
     }
 
     public Class<?> getType() {
