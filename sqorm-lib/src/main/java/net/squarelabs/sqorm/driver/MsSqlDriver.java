@@ -5,6 +5,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MsSqlDriver extends DbDriver {
 
@@ -15,6 +16,14 @@ public class MsSqlDriver extends DbDriver {
                     name, se(), name, ee()));
             stmt.execute(String.format("create database %s%s%s;", se(), name, ee()));
         }
+    }
+
+    @Override
+    public Object javaToSql(Object value) {
+        if (value instanceof UUID) {
+            return value.toString();
+        }
+        return value;
     }
 
     @Override

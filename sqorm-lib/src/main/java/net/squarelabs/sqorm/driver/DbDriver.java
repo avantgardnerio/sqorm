@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class DbDriver {
 
@@ -19,6 +20,10 @@ public abstract class DbDriver {
             stmt.execute(String.format("drop database if exists %s%s%s;", se(), name, ee()));
             stmt.execute(String.format("create database %s%s%s;", se(), name, ee()));
         }
+    }
+
+    public Object javaToSql(Object value) {
+        return value;
     }
 
     public String rootDb() {

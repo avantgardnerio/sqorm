@@ -1,35 +1,10 @@
 package net.squarelabs.sqorm.sql;
 
-import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
 public class TypeConverter {
-
-    /**
-     * Called to translate Java types into SQL Parameter types, but only when the type is unknown
-     * (like in a user-defined query).
-     *
-     * @param value The type to convert
-     * @return The result
-     */
-    public static Object javaToSql(Object value) {
-        if (value instanceof UUID) {
-            return value.toString();
-        }
-
-        return value;
-    }
-
-    public static Object javaToSql(Class<?> clazz, Object value) {
-        // PostGreSQL: http://crafted-software.blogspot.com/2013/03/uuid-values-from-jdbc-to-postgres.html
-        if (clazz == UUID.class) {
-            return value.toString();
-        }
-
-        return value;
-    }
 
     public static Object sqlToJava(Class<?> clazz, ResultSet rs, int index) throws SQLException {
         // String
@@ -49,7 +24,13 @@ public class TypeConverter {
 
         // UUID
         if (clazz == UUID.class) {
-            return UUID.fromString(rs.getString(index));
+            Object obj = rs.getObject(index);
+            if(obj instanceof String) {
+                return UUID.fromString(rs.getString(index));
+            }
+            if(obj instanceof byte[]) {
+                return UUID.nameUUIDFromBytes((byte[])obj);
+            }
         }
 
         throw new RuntimeException("Can't convert ["

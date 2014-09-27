@@ -55,7 +55,7 @@ public class QueryCache {
                     throw new RuntimeException("Value not specified for parameter: " + parmName);
                 }
                 Object javaVal = parms.get(parmName);
-                Object sqlVal = TypeConverter.javaToSql(javaVal);
+                Object sqlVal = driver.javaToSql(javaVal);
                 stmt.setObject(i++, sqlVal);
             }
         } catch (Exception ex) {

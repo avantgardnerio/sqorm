@@ -331,7 +331,7 @@ public class TableSchema {
     private int setParm(PreparedStatement stmt, Object record, ColumnSchema col, int idx) {
         Object javaVal = col.get(record);
         try {
-            Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
+            Object sqlVal = driver.javaToSql(javaVal);
             stmt.setObject(idx++, sqlVal);
             return idx;
         } catch (Exception ex) {
