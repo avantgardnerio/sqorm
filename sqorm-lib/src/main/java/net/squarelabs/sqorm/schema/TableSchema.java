@@ -1,10 +1,16 @@
 package net.squarelabs.sqorm.schema;
 
+import com.google.common.base.Joiner;
+import com.sun.xml.internal.ws.developer.SerializationFeature;
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 import net.squarelabs.sqorm.driver.DbDriver;
+import net.squarelabs.sqorm.sql.MockStatement;
 import net.squarelabs.sqorm.sql.TypeConverter;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -137,6 +143,27 @@ public class TableSchema {
 
     public void update(Connection con, Object record) {
         try (PreparedStatement stmt = con.prepareStatement(updateQuery)) {
+            prepareUpdateParms(stmt, record);
+            int rowCount = stmt.executeUpdate();
+            if (rowCount != 1) {
+                throw new Exception("Update failed!");
+            }
+        } catch (Exception ex) {
+            MockStatement stmt = new MockStatement();
+            prepareUpdateParms(stmt, record);
+            String msg = String.format("Error updating record in [%s] using [%s]:\n", tableName, driver.name());
+            msg += updateQuery + "\n";
+            try {
+                msg += new ObjectMapper().enable(SerializationConfig.Feature.INDENT_OUTPUT).writeValueAsString(stmt.getParms());
+            } catch (Exception e) {
+                // Just give up...
+            }
+            throw new RuntimeException(msg, ex);
+        }
+    }
+
+    private void prepareUpdateParms(PreparedStatement stmt, Object record) {
+        try {
             int idx = 1;
             for (ColumnSchema col : updateColumns.values()) {
                 Object javaVal = col.get(record);
@@ -147,13 +174,8 @@ public class TableSchema {
                 Object val = col.get(record);
                 stmt.setObject(idx++, val);
             }
-            int rowCount = stmt.executeUpdate();
-            if (rowCount != 1) {
-                throw new Exception("Update failed!");
-            }
         } catch (Exception ex) {
-            String msg = String.format("Error updating record in [%s] using [%s]", tableName, driver.name());
-            throw new RuntimeException(msg, ex);
+            throw new RuntimeException("Error preparing SQL parameters!", ex);
         }
     }
 

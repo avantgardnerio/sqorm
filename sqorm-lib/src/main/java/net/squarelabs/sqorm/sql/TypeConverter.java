@@ -1,8 +1,5 @@
 package net.squarelabs.sqorm.sql;
 
-import net.sourceforge.jtds.jdbc.ClobImpl;
-
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,8 +15,8 @@ public class TypeConverter {
      * @return The result
      */
     public static Object javaToSql(Object value) {
-        if(value instanceof UUID) {
-            UUID uuid = (UUID)value;
+        if (value instanceof UUID) {
+            UUID uuid = (UUID) value;
             ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
             bb.putLong(uuid.getMostSignificantBits());
             bb.putLong(uuid.getLeastSignificantBits());
@@ -30,8 +27,8 @@ public class TypeConverter {
     }
 
     public static Object javaToSql(Class<?> clazz, Object value) {
-        if(clazz == UUID.class) {
-            UUID uuid = (UUID)value;
+        if (clazz == UUID.class) {
+            UUID uuid = (UUID) value;
             ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
             bb.putLong(uuid.getMostSignificantBits());
             bb.putLong(uuid.getLeastSignificantBits());
@@ -43,22 +40,22 @@ public class TypeConverter {
 
     public static Object sqlToJava(Class<?> clazz, ResultSet rs, int index) throws SQLException {
         // String
-        if(clazz == String.class) {
+        if (clazz == String.class) {
             return rs.getString(index);
         }
 
         // Boolean
-        if(clazz == boolean.class || clazz == Boolean.class) {
+        if (clazz == boolean.class || clazz == Boolean.class) {
             return rs.getBoolean(index);
         }
 
         // Integer
-        if(clazz == int.class || clazz == Integer.class) {
+        if (clazz == int.class || clazz == Integer.class) {
             return rs.getInt(index);
         }
 
         // UUID
-        if(clazz == UUID.class) {
+        if (clazz == UUID.class) {
             return UUID.fromString(rs.getString(index));
         }
 
