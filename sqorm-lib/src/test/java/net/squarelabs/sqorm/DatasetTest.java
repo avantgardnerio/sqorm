@@ -1,6 +1,5 @@
 package net.squarelabs.sqorm;
 
-import com.googlecode.flyway.core.Flyway;
 import net.squarelabs.sqorm.dataset.Dataset;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
@@ -8,7 +7,7 @@ import net.squarelabs.sqorm.model.Customer;
 import net.squarelabs.sqorm.model.Order;
 import net.squarelabs.sqorm.schema.DbSchema;
 import net.squarelabs.sqorm.sql.QueryCache;
-import net.squarelabs.sqorm.test.TestBase;
+import net.squarelabs.sqorm.test.DbIntegrationTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatasetTest extends TestBase {
+public class DatasetTest extends DbIntegrationTest {
 
     public DatasetTest(String driverClass, String url) {
         super(driverClass, url);
@@ -29,15 +28,7 @@ public class DatasetTest extends TestBase {
     @Test
     public void canIterate() throws Exception {
         try(Connection con = getPool().getConnection()) {
-            // Clean DB
             DbDriver driver = DriverFactory.getDriver(con);
-            driver.dropTables(con);
-
-            // Rebuild DB
-            Flyway flyway = new Flyway();
-            flyway.setDataSource(getPool());
-            flyway.setLocations("ddl/" + driver.name());
-            flyway.migrate();
             DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.model");
 
             // Add records
