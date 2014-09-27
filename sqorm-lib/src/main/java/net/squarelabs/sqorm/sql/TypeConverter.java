@@ -25,6 +25,9 @@ public class TypeConverter {
         // UUID
         if (clazz == UUID.class) {
             Object obj = rs.getObject(index);
+            if(obj instanceof UUID) {
+                return obj;
+            }
             if(obj instanceof String) {
                 return UUID.fromString(rs.getString(index));
             }

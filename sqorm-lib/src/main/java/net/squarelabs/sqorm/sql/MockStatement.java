@@ -12,7 +12,7 @@ import java.util.*;
 
 public class MockStatement implements PreparedStatement {
 
-    private static final SortedMap<Integer,Object> parms = new TreeMap<>();
+    private final SortedMap<Integer,Object> parms = new TreeMap<>();
 
     public SortedMap<Integer,Object> getParms() {
         return Collections.unmodifiableSortedMap(parms);

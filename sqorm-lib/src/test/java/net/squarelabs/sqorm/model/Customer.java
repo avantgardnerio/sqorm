@@ -5,7 +5,7 @@ import net.squarelabs.sqorm.annotation.Table;
 
 import java.util.UUID;
 
-@Table(name = "customer")
+@Table(name = "Customer")
 public class Customer {
     private String name;
     private UUID customerId;

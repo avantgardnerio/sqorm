@@ -85,9 +85,9 @@ public class TableSchema {
 
     public List<ColumnSchema> getColumns(String[] colNames) {
         List<ColumnSchema> cols = new ArrayList<>();
-        for(String colName : colNames) {
+        for (String colName : colNames) {
             ColumnSchema col = getColumn(colName);
-            if(col == null) {
+            if (col == null) {
                 throw new RuntimeException("Column not found: " + colName);
             }
             cols.add(col);
@@ -101,7 +101,7 @@ public class TableSchema {
 
     public IndexSchema ensureIndex(List<ColumnSchema> cols) {
         IndexSchema idx = getIndex(cols);
-        if(idx != null) {
+        if (idx != null) {
             return idx;
         }
         idx = new IndexSchema(cols);
@@ -110,8 +110,8 @@ public class TableSchema {
     }
 
     public IndexSchema getIndex(List<ColumnSchema> cols) {
-        for(IndexSchema idx : indices) {
-            if(idx.matches(cols)) {
+        for (IndexSchema idx : indices) {
+            if (idx.matches(cols)) {
                 return idx;
             }
         }
@@ -146,15 +146,7 @@ public class TableSchema {
                 throw new Exception("Update failed!");
             }
         } catch (Exception ex) {
-            MockStatement stmt = new MockStatement();
-            prepareUpdateParms(stmt, record);
-            String msg = String.format("Error updating record in [%s] using [%s]:\n", tableName, driver.name());
-            msg += updateQuery + "\n";
-            try {
-                msg += new ObjectMapper().enable(SerializationConfig.Feature.INDENT_OUTPUT).writeValueAsString(stmt.getParms());
-            } catch (Exception e) {
-                // Just give up...
-            }
+            String msg = getFriendlyError(record, false);
             throw new RuntimeException(msg, ex);
         }
     }
@@ -168,11 +160,11 @@ public class TableSchema {
             }
 
             // Grab auto incremented keys
-            if(autoIncrementColumns.size() > 0) {
+            if (autoIncrementColumns.size() > 0) {
                 int resIndex = 0;
-                try(ResultSet rs = stmt.getGeneratedKeys()) {
-                    while(rs.next()) {
-                        if(resIndex >= autoIncrementColumns.size()) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    while (rs.next()) {
+                        if (resIndex >= autoIncrementColumns.size()) {
                             throw new Exception("More generated keys than columns!");
                         }
                         int val = rs.getInt(1);
@@ -181,7 +173,7 @@ public class TableSchema {
                 }
             }
         } catch (Exception ex) {
-            String msg = String.format("Error inserting record into [%s] using [%s]", tableName, driver.name());
+            String msg = getFriendlyError(record, true);
             throw new RuntimeException(msg, ex);
         }
     }
@@ -216,8 +208,8 @@ public class TableSchema {
 
     private static List<ColumnSchema> findPk(Map<String, ColumnSchema> columns) {
         List<ColumnSchema> pk = new ArrayList<>();
-        for(ColumnSchema col : columns.values()) {
-            if(col.getPkOrdinal() >= 0) {
+        for (ColumnSchema col : columns.values()) {
+            if (col.getPkOrdinal() >= 0) {
                 pk.add(col);
             }
         }
@@ -242,7 +234,8 @@ public class TableSchema {
     private static String writeUpdateQuery(SortedMap<String, ColumnSchema> updateCols,
                                            DbDriver driver, String tableName, List<ColumnSchema> idColumns) {
         List<String> idNames = idColumns.stream().map(col -> col.getName()).collect(Collectors.toList());
-        String updateClause = StringUtils.join(updateCols.keySet(), driver.ee() + "=?,\n" + driver.se());
+        List<String> keys = updateCols.values().stream().map(ColumnSchema::getName).collect(Collectors.toList());
+        String updateClause = StringUtils.join(keys, driver.ee() + "=?,\n" + driver.se());
         updateClause = driver.se() + updateClause + driver.ee() + "=?\n";
         String whereClause = StringUtils.join(idNames, driver.ee() + "=? and " + driver.se());
         whereClause = driver.se() + whereClause + driver.ee() + "=?";
@@ -255,7 +248,8 @@ public class TableSchema {
         String[] values = StringUtils.repeat("?", columns.size()).split("");
         String valueClause = StringUtils.join(values, ",");
         String delim = driver.ee() + "," + driver.se();
-        String insertClause = driver.se() + StringUtils.join(columns.keySet(), delim) + driver.ee();
+        List<String> keys = columns.values().stream().map(ColumnSchema::getName).collect(Collectors.toList());
+        String insertClause = driver.se() + StringUtils.join(keys, delim) + driver.ee();
         String sql = String.format("insert into %s%s%s (%s) values (%s);",
                 driver.se(), tableName, driver.ee(), insertClause, valueClause);
         return sql;
@@ -312,8 +306,7 @@ public class TableSchema {
 
     private void prepareInsertParms(PreparedStatement stmt, Object record) {
         int idx = 1;
-        for (Map.Entry<String, ColumnSchema> entry : insertColumns.entrySet()) {
-            ColumnSchema col = entry.getValue();
+        for (ColumnSchema col : insertColumns.values()) {
             idx = setParm(stmt, record, col, idx);
         }
     }
@@ -340,8 +333,25 @@ public class TableSchema {
         }
     }
 
+    private String getFriendlyError(Object record, boolean insert) {
+        try {
+            MockStatement stmt = new MockStatement();
+            if(insert) {
+                prepareInsertParms(stmt, record);
+            } else {
+                prepareUpdateParms(stmt, record);
+            }
+            String msg = String.format("Error upserting record into [%s] using [%s]\n", tableName, driver.name());
+            msg += (insert ? insertQuery : updateQuery) + "\n";
+            msg += new ObjectMapper().enable(SerializationConfig.Feature.INDENT_OUTPUT).writeValueAsString(stmt.getParms());
+            return msg;
+        } catch (Exception ex) {
+            throw new RuntimeException("Error getting error!", ex);
+        }
+    }
+
     private static AnnotationCache getAc(Map<String, AnnotationCache> annos, String name) {
-        if(annos.containsKey(name)) {
+        if (annos.containsKey(name)) {
             return annos.get(name);
         }
         AnnotationCache ac = new AnnotationCache(name);
