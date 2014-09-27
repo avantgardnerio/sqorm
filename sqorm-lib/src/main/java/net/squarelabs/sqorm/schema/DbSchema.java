@@ -84,6 +84,13 @@ public class DbSchema {
         for(Map.Entry<String,AssociationCache> entry : associations.entrySet()) {
             String relName = entry.getKey();
             AssociationCache ac = entry.getValue();
+            if(ac.parentTable == null) {
+                throw new RuntimeException("Could not find parent table for relation: " + relName);
+            }
+            if(ac.childTable == null) {
+                throw new RuntimeException("Could not find child table for relation: " + relName);
+            }
+
             List<ColumnSchema> primaryCols = ac.parentTable.getColumns(ac.association.primaryKey());
             IndexSchema primaryIdx = ac.parentTable.ensureIndex(primaryCols);
             List<ColumnSchema> foreignCols = ac.childTable.getColumns(ac.association.foreignKey());
