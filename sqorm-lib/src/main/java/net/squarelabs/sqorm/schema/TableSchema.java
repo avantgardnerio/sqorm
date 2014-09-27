@@ -62,8 +62,8 @@ public class TableSchema {
         primaryKey = ensureIndex(findPk(columns));
 
         // Write queries
-        insertQuery = writeInsertQuery(insertColumns, driver, tableName);
-        updateQuery = writeUpdateQuery(updateColumns, driver, tableName, idColumns);
+        insertQuery = driver.writeInsertQuery(insertColumns, tableName);
+        updateQuery = driver.writeUpdateQuery(updateColumns, tableName, idColumns);
     }
 
     public String getName() {
@@ -228,30 +228,6 @@ public class TableSchema {
             }
         }
         return null;
-    }
-
-    private static String writeUpdateQuery(SortedMap<String, ColumnSchema> updateCols,
-                                           DbDriver driver, String tableName, List<ColumnSchema> idColumns) {
-        List<String> idNames = idColumns.stream().map(col -> col.getName()).collect(Collectors.toList());
-        List<String> keys = updateCols.values().stream().map(ColumnSchema::getName).collect(Collectors.toList());
-        String updateClause = StringUtils.join(keys, driver.ee() + "=?,\n" + driver.se());
-        updateClause = driver.se() + updateClause + driver.ee() + "=?\n";
-        String whereClause = StringUtils.join(idNames, driver.ee() + "=? and " + driver.se());
-        whereClause = driver.se() + whereClause + driver.ee() + "=?";
-        String sql = String.format("update %s%s%s set %s where %s",
-                driver.se(), tableName, driver.ee(), updateClause, whereClause);
-        return sql;
-    }
-
-    private static String writeInsertQuery(Map<String, ColumnSchema> columns, DbDriver driver, String tableName) {
-        String[] values = StringUtils.repeat("?", columns.size()).split("");
-        String valueClause = StringUtils.join(values, ",");
-        String delim = driver.ee() + "," + driver.se();
-        List<String> keys = columns.values().stream().map(ColumnSchema::getName).collect(Collectors.toList());
-        String insertClause = driver.se() + StringUtils.join(keys, delim) + driver.ee();
-        String sql = String.format("insert into %s%s%s (%s) values (%s);",
-                driver.se(), tableName, driver.ee(), insertClause, valueClause);
-        return sql;
     }
 
     private static SortedMap<String, ColumnSchema> parseAnnotations(Class<?> clazz) {
