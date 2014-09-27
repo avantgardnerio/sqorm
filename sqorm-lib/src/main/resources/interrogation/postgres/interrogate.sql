@@ -11,7 +11,9 @@ SELECT
   'net.squarelabs.sqorm.codegen.model.Column' AS classpath,
   table_name,
   column_name,
-  data_type
+  data_type,
+  CASE WHEN column_default LIKE 'nextval%' THEN TRUE
+  ELSE FALSE END                              AS auto_increment
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_CATALOG = 'sqorm' AND TABLE_SCHEMA = 'public'
 ORDER BY table_name, column_name;

@@ -9,12 +9,15 @@ ORDER BY table_name;
 -- Columns
 SELECT
   'net.squarelabs.sqorm.codegen.model.Column' AS classpath,
-  table_name,
-  column_name,
-  DATA_TYPE
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_CATALOG = 'sqorm'
-ORDER BY table_name, column_name;
+  tab.name                                    AS table_name,
+  col.name                                    AS column_name,
+  typ.name                                    AS DATA_TYPE,
+  col.colstat & 1                             AS auto_increment
+FROM sysobjects tab
+  INNER JOIN syscolumns col ON col.id = tab.id
+  INNER JOIN systypes typ ON typ.xtype = col.xtype AND typ.xusertype = col.xusertype
+WHERE tab.type = 'U'
+ORDER BY table_name, column_name
 
 -- Relations
 SELECT

@@ -11,7 +11,9 @@ SELECT
   'net.squarelabs.sqorm.codegen.model.Column' AS classpath,
   table_name,
   column_name,
-  data_type
+  data_type,
+  CASE WHEN EXTRA LIKE '%auto_increment%' THEN TRUE
+  ELSE FALSE END                              AS auto_increment
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_SCHEMA = 'sqorm'
 ORDER BY table_name, column_name;
