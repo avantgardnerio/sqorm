@@ -1,9 +1,11 @@
 -- Tables
 SELECT
   'net.squarelabs.sqorm.codegen.model.Table' AS classpath,
-  tab.table_name
+  table_name
 FROM INFORMATION_SCHEMA.TABLES tab
-where tab.table_schema='sqorm'
+WHERE (table_catalog = 'sqorm' AND TABLE_SCHEMA = 'dbo') /* T-SQL */
+      OR (table_catalog = 'sqorm' AND TABLE_SCHEMA = 'public') /* PostGreSQL */
+      OR (table_catalog = 'def' AND TABLE_SCHEMA = 'sqorm') /* MySQL */
 ;
 
 -- Columns
@@ -13,13 +15,14 @@ SELECT
   column_name,
   data_type,
   character_maximum_length,
-  (CASE WHEN is_nullable = 'YES' THEN TRUE
-   ELSE FALSE END)                            AS is_nullable,
+  is_nullable,
   numeric_precision,
   numeric_scale,
   column_default
 FROM INFORMATION_SCHEMA.COLUMNS col
-where col.table_schema='sqorm'
+WHERE (table_catalog = 'sqorm' AND TABLE_SCHEMA = 'dbo') /* T-SQL */
+      OR (table_catalog = 'sqorm' AND TABLE_SCHEMA = 'public') /* PostGreSQL */
+      OR (table_catalog = 'def' AND TABLE_SCHEMA = 'sqorm') /* MySQL */
 ;
 
 -- Relations

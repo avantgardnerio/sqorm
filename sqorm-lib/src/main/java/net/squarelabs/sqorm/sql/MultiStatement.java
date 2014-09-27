@@ -47,7 +47,12 @@ public class MultiStatement implements PreparedStatement {
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return getCurrentStatement().executeQuery();
+        PreparedStatement stmt = getCurrentStatement();
+        try {
+            return stmt.executeQuery();
+        } catch (Exception ex) {
+            throw new RuntimeException("Error running query: " + stmt, ex);
+        }
     }
 
     @Override
