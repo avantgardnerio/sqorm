@@ -21,7 +21,7 @@ public class GeneratorTest extends DbIntegrationTest {
     public void generatorShouldGetSchema() throws Exception {
         try(Connection con = getPool().getConnection()) {
             Collection<Table> tables = Generator.loadSchema(con);
-            Assert.assertEquals("Tables are present", tables.size(), 7);
+            Assert.assertEquals("Tables are present", 8, tables.size());
             boolean hasColumns = true;
             for(Table table : tables) {
                 Collection<Column> cols = table.getColumnChildren();
