@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,7 @@ public class TableSchema {
     private final SortedMap<String, ColumnSchema> updateColumns;
     private final ColumnSchema versionCol;
     private final List<ColumnSchema> idColumns;
+    private final List<ColumnSchema> autoIncrementColumns;
     private final IndexSchema primaryKey;
 
     // Cached query syntax
@@ -47,9 +50,13 @@ public class TableSchema {
         // Collect accessors
         columns = parseAnnotations(clazz);
         versionCol = findVersionCol(columns);
+
+        autoIncrementColumns = findAutoIncrementColumns(columns);
+        insertColumns = findInsertCols(columns, autoIncrementColumns);
+
         idColumns = findIdCols(columns);
-        insertColumns = findInsertCols(columns);
         updateColumns = findUpdateCols(columns, idColumns);
+
         primaryKey = ensureIndex(findPk(columns));
 
         // Write queries
@@ -151,8 +158,10 @@ public class TableSchema {
     }
 
     public void insert(Connection con, Object record) {
-        try (PreparedStatement stmt = con.prepareStatement(insertQuery)) {
-            int i = 1;
+        try (PreparedStatement stmt = con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+
+            // Setup parameters
+            int parmIndex = 1;
             for (Map.Entry<String, ColumnSchema> entry : columns.entrySet()) {
                 ColumnSchema col = entry.getValue();
                 if(col.isAutoIncrement()) {
@@ -161,15 +170,31 @@ public class TableSchema {
                 Object javaVal = col.get(record);
                 try {
                     Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
-                    stmt.setObject(i++, sqlVal);
+                    stmt.setObject(parmIndex++, sqlVal);
                 } catch (Exception ex) {
                     String msg = String.format("Error setting column [%s] with value [%s]", col.getName(), javaVal);
                     throw new Exception(msg, ex);
                 }
             }
+
+            // Insert the record
             int rowCount = stmt.executeUpdate();
             if (rowCount != 1) {
                 throw new Exception("Insert failed!");
+            }
+
+            // Grab auto incremented keys
+            if(autoIncrementColumns.size() > 0) {
+                int resIndex = 0;
+                try(ResultSet rs = stmt.getGeneratedKeys()) {
+                    while(rs.next()) {
+                        if(resIndex >= autoIncrementColumns.size()) {
+                            throw new Exception("More generated keys than columns!");
+                        }
+                        int val = rs.getInt(1);
+                        autoIncrementColumns.get(resIndex++).set(record, val);
+                    }
+                }
             }
         } catch (Exception ex) {
             String msg = String.format("Error inserting record into [%s] using [%s]", tableName, driver.name());
@@ -184,14 +209,18 @@ public class TableSchema {
         return updateCols;
     }
 
-    private static SortedMap<String, ColumnSchema> findInsertCols(Map<String, ColumnSchema> columns) {
-        SortedMap<String, ColumnSchema> insertCols = new TreeMap<>();
-        for(ColumnSchema col : columns.values()) {
-            if(!col.isAutoIncrement()) {
-                insertCols.put(col.getName(), col);
-            }
-        }
+    private static SortedMap<String, ColumnSchema> findInsertCols(Map<String, ColumnSchema> columns,
+                                                                  List<ColumnSchema> autoIncrementColumns) {
+        SortedMap<String, ColumnSchema> insertCols = new TreeMap<>(columns);
+        autoIncrementColumns.forEach(col -> insertCols.remove(col.getName()));
         return insertCols;
+    }
+
+    private static List<ColumnSchema> findAutoIncrementColumns(Map<String, ColumnSchema> columns) {
+        List<ColumnSchema> autoIncrementColumns = columns.values().stream()
+                .filter(col -> col.isAutoIncrement()).collect(Collectors.toList());
+        autoIncrementColumns.sort((ColumnSchema a, ColumnSchema b) -> a.getPkOrdinal() - b.getPkOrdinal());
+        return autoIncrementColumns;
     }
 
     private static List<ColumnSchema> findIdCols(Map<String, ColumnSchema> columns) {
