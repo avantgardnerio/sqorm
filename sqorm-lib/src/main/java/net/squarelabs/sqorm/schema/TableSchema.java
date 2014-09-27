@@ -159,48 +159,9 @@ public class TableSchema {
         }
     }
 
-    private void prepareUpdateParms(PreparedStatement stmt, Object record) {
-        try {
-            int idx = 1;
-            for (ColumnSchema col : updateColumns.values()) {
-                idx = setParm(stmt, record, col, idx);
-            }
-            for (ColumnSchema col : idColumns) {
-                idx = setParm(stmt, record, col, idx);
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error preparing SQL parameters!", ex);
-        }
-    }
-
-    private int setParm(PreparedStatement stmt, Object record, ColumnSchema col, int idx) throws SQLException {
-        Object javaVal = col.get(record);
-        Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
-        stmt.setObject(idx++, sqlVal);
-        return idx;
-    }
-
     public void insert(Connection con, Object record) {
         try (PreparedStatement stmt = con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
-
-            // Setup parameters
-            int parmIndex = 1;
-            for (Map.Entry<String, ColumnSchema> entry : columns.entrySet()) {
-                ColumnSchema col = entry.getValue();
-                if(col.isAutoIncrement()) {
-                    continue; // Don't insert values in auto_increment columns
-                }
-                Object javaVal = col.get(record);
-                try {
-                    Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
-                    stmt.setObject(parmIndex++, sqlVal);
-                } catch (Exception ex) {
-                    String msg = String.format("Error setting column [%s] with value [%s]", col.getName(), javaVal);
-                    throw new Exception(msg, ex);
-                }
-            }
-
-            // Insert the record
+            prepareInsertParms(stmt, record);
             int rowCount = stmt.executeUpdate();
             if (rowCount != 1) {
                 throw new Exception("Insert failed!");
@@ -347,6 +308,36 @@ public class TableSchema {
 
     protected void addParentRelation(RelationSchema rel) {
         parentRelations.add(rel);
+    }
+
+    private void prepareInsertParms(PreparedStatement stmt, Object record) {
+        int idx = 1;
+        for (Map.Entry<String, ColumnSchema> entry : insertColumns.entrySet()) {
+            ColumnSchema col = entry.getValue();
+            idx = setParm(stmt, record, col, idx);
+        }
+    }
+
+    private void prepareUpdateParms(PreparedStatement stmt, Object record) {
+        int idx = 1;
+        for (ColumnSchema col : updateColumns.values()) {
+            idx = setParm(stmt, record, col, idx);
+        }
+        for (ColumnSchema col : idColumns) {
+            idx = setParm(stmt, record, col, idx);
+        }
+    }
+
+    private int setParm(PreparedStatement stmt, Object record, ColumnSchema col, int idx) {
+        Object javaVal = col.get(record);
+        try {
+            Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
+            stmt.setObject(idx++, sqlVal);
+            return idx;
+        } catch (Exception ex) {
+            String msg = String.format("Error setting column [%s] with value [%s]", col.getName(), javaVal);
+            throw new RuntimeException(msg, ex);
+        }
     }
 
     private static AnnotationCache getAc(Map<String, AnnotationCache> annos, String name) {
