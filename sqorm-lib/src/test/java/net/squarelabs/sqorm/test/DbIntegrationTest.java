@@ -81,9 +81,9 @@ public class DbIntegrationTest implements AutoCloseable {
     public static Collection getPools() {
         // TODO: Throw this in a resource file
         return Arrays.asList(new Object[][]{
-                {"net.sourceforge.jtds.jdbc.Driver", "jdbc:jtds:sqlserver://127.0.0.1", null}
-                //,{"com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1?allowMultiQueries=true", null}
-                //,{"org.postgresql.Driver", "jdbc:postgresql://127.0.0.1/sqorm", "jdbc:postgresql://127.0.0.1/postgres"}
+                //{"net.sourceforge.jtds.jdbc.Driver", "jdbc:jtds:sqlserver://127.0.0.1", null}
+                {"com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1?allowMultiQueries=true", null}
+                //{"org.postgresql.Driver", "jdbc:postgresql://127.0.0.1/sqorm", "jdbc:postgresql://127.0.0.1/postgres"}
         });
     }
 

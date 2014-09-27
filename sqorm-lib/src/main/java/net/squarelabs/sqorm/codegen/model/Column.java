@@ -10,20 +10,6 @@ public class Column {
     private String columnName;
     private String tableName;
     private String dataType;
-    private String defaultValue;
-    private String description;
-
-    private int ordinal;
-    private Integer seed;
-    private Integer scale;
-    private Integer increment;
-    private Integer maxLength;
-    private Integer precision;
-    private boolean isNullable;
-
-    private boolean isIdentity;
-    private Integer pkOrdinal;
-    private boolean isArray;
 
     private Table parentTable;
 
@@ -47,16 +33,6 @@ public class Column {
         this.columnName = name;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "is_identity")
-    public boolean isIdentity() {
-        return isIdentity;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "is_identity")
-    public void setIdentity(boolean isIdentity) {
-        this.isIdentity = isIdentity;
-    }
-
     @net.squarelabs.sqorm.annotation.Column(name = "data_type")
     public String getDataType() {
         return dataType;
@@ -65,116 +41,6 @@ public class Column {
     @net.squarelabs.sqorm.annotation.Column(name = "data_type")
     public void setDataType(String dataType) {
         this.dataType = dataType;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "character_maximum_length")
-    public Integer getMaxLength() {
-        return maxLength;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "character_maximum_length")
-    public void setMaxLength(Integer maxLength) {
-        this.maxLength = maxLength;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "numeric_precision")
-    public Integer getPrecision() {
-        return precision;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "numeric_precision")
-    public void setPrecision(Integer precision) {
-        this.precision = precision;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "numeric_scale")
-    public Integer getScale() {
-        return scale;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "numeric_scale")
-    public void setScale(Integer scale) {
-        this.scale = scale;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "is_nullable")
-    public boolean isNullable() {
-        return isNullable;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "is_nullable")
-    public void setNullable(boolean isNullable) {
-        this.isNullable = isNullable;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "column_default")
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "column_default")
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "seed")
-    public Integer getSeed() {
-        return seed;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "seed")
-    public void setSeed(Integer seed) {
-        this.seed = seed;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "increment")
-    public Integer getIncrement() {
-        return increment;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "increment")
-    public void setIncrement(Integer increment) {
-        this.increment = increment;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "pk_ordinal")
-    public Integer getPrimaryKey() {
-        return pkOrdinal;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "pk_ordinal")
-    public void setPrimaryKey(Integer value) {
-        this.pkOrdinal = value;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "is_array")
-    public boolean isArray() {
-        return isArray;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "is_array")
-    public void setArray(boolean isArray) {
-        this.isArray = isArray;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "ordinal_position")
-    public int getOrdinal() {
-        return ordinal;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "ordinal_position")
-    public void setOrdinal(int ordinal) {
-        this.ordinal = ordinal;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "description")
-    public String getDescription() {
-        return description;
-    }
-
-    @net.squarelabs.sqorm.annotation.Column(name = "description")
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     // ------------------------------------- Parent Associations ------------------------------------------------------
