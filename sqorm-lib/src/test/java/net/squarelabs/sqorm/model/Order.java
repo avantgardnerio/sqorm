@@ -3,39 +3,41 @@ package net.squarelabs.sqorm.model;
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 
+import java.util.UUID;
+
 @Table(name = "Orders")
 public class Order {
 
     private int orderId;
-    private int customerId;
+    private UUID customerId;
     private int version;
 
     public Order() {
 
     }
 
-    public Order(int orderId, int customerId) {
+    public Order(int orderId, UUID customerId) {
         this.orderId = orderId;
         this.customerId = customerId;
     }
 
-    @Column(name="OrderId", pkOrdinal = 0)
+    @Column(name="order_id", pkOrdinal = 0)
     public int getOrderId() {
         return orderId;
     }
 
-    @Column(name="OrderId", pkOrdinal = 0)
+    @Column(name="order_id", pkOrdinal = 0)
     public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
     @Column(name="customer_id")
-    public int getCustomerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 
     @Column(name="customer_id")
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
     }
 

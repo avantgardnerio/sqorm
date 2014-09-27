@@ -62,7 +62,7 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
                 }
                 Object javaVal;
                 try {
-                    javaVal = TypeConverter.SqlToJava(col.getType(), sqlVal);
+                    javaVal = TypeConverter.sqlToJava(col.getType(), sqlVal);
                 } catch (Exception ex) {
                     throw new RuntimeException("Error converting [" + table.getName() + "].[" + colName + "]", ex);
                 }

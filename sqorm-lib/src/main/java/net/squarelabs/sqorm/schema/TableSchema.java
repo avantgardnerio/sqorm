@@ -3,6 +3,7 @@ package net.squarelabs.sqorm.schema;
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 import net.squarelabs.sqorm.driver.DbDriver;
+import net.squarelabs.sqorm.sql.TypeConverter;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Method;
@@ -15,6 +16,7 @@ public class TableSchema {
 
     private final String tableName;
     private final Class<?> clazz;
+    private final DbDriver driver;
 
     // Reflection cache
     private final List<IndexSchema> indices = new ArrayList<>();
@@ -33,6 +35,7 @@ public class TableSchema {
 
     public TableSchema(Class<?> clazz, DbDriver driver) {
         this.clazz = clazz;
+        this.driver = driver;
 
         Table tableAno = clazz.getAnnotation(Table.class);
         if (tableAno == null) {
@@ -139,7 +142,8 @@ public class TableSchema {
                 throw new Exception("Update failed!");
             }
         } catch (Exception ex) {
-            throw new RuntimeException("Error updating record!", ex);
+            String msg = String.format("Error updating record in [%s] using [%s]", tableName, driver.name());
+            throw new RuntimeException(msg, ex);
         }
     }
 
@@ -148,15 +152,22 @@ public class TableSchema {
             int i = 1;
             for (Map.Entry<String, ColumnSchema> entry : columns.entrySet()) {
                 ColumnSchema col = entry.getValue();
-                Object val = col.get(record);
-                stmt.setObject(i++, val);
+                Object javaVal = col.get(record);
+                try {
+                    Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
+                    stmt.setObject(i++, sqlVal);
+                } catch (Exception ex) {
+                    String msg = String.format("Error setting column [%s] with value [%s]", col.getName(), javaVal);
+                    throw new Exception(msg, ex);
+                }
             }
             int rowCount = stmt.executeUpdate();
             if (rowCount != 1) {
                 throw new Exception("Insert failed!");
             }
         } catch (Exception ex) {
-            throw new RuntimeException("Error inserting record!", ex);
+            String msg = String.format("Error inserting record into [%s] using [%s]", tableName, driver.name());
+            throw new RuntimeException(msg, ex);
         }
     }
 

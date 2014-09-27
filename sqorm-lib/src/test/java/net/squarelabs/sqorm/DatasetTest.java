@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DatasetTest extends DbIntegrationTest {
 
@@ -33,10 +34,12 @@ public class DatasetTest extends DbIntegrationTest {
 
             // Add records
             try(Persistor per = new Persistor(db, con)) {
-                per.persist(new Customer(1, "alice"));
-                per.persist(new Customer(2, "bob"));
-                per.persist(new Order(1, 1));
-                per.persist(new Order(2, 1));
+                UUID aid = UUID.randomUUID();
+                UUID bid = UUID.randomUUID();
+                per.persist(new Customer(aid, "alice"));
+                per.persist(new Customer(bid, "bob"));
+                per.persist(new Order(1, aid));
+                per.persist(new Order(2, bid));
             }
 
             // Select from tables
@@ -48,7 +51,7 @@ public class DatasetTest extends DbIntegrationTest {
             Assert.assertEquals("All parents iterable", 1, ds.ensureRecordset(Customer.class).size());
             Assert.assertEquals("All children iterable", 2, ds.ensureRecordset(Order.class).size());
 
-            ds.attach(new Customer(3, "Charlie"));
+            ds.attach(new Customer(UUID.randomUUID(), "Charlie"));
             try(Persistor per = new Persistor(db, con)) {
                 ds.commit(per);
             }

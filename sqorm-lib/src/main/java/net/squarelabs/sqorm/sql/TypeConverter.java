@@ -1,10 +1,24 @@
 package net.squarelabs.sqorm.sql;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.UUID;
 
 public class TypeConverter {
 
-    public static Object SqlToJava(Class<?> clazz, Object value) {
+    public static Object javaToSql(Class<?> clazz, Object value) {
+        if(clazz == UUID.class) {
+            UUID uuid = (UUID)value;
+            ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+            bb.putLong(uuid.getMostSignificantBits());
+            bb.putLong(uuid.getLeastSignificantBits());
+            return bb.array();
+        }
+
+        return value;
+    }
+
+    public static Object sqlToJava(Class<?> clazz, Object value) {
         if(value == null) {
             return null;
         }

@@ -3,10 +3,12 @@ package net.squarelabs.sqorm.model;
 import net.squarelabs.sqorm.annotation.Column;
 import net.squarelabs.sqorm.annotation.Table;
 
+import java.util.UUID;
+
 @Table(name = "customer")
 public class Customer {
     private String name;
-    private int customerId;
+    private UUID customerId;
 
     private int version;
 
@@ -14,18 +16,18 @@ public class Customer {
 
     }
 
-    public Customer(int id, String name) {
+    public Customer(UUID id, String name) {
         this.customerId = id;
         this.name = name;
     }
 
-    @Column(name="customer_id", pkOrdinal = 0)
-    public int getCustomerId() {
+    @Column(name="CustomerId", pkOrdinal = 0)
+    public UUID getCustomerId() {
         return customerId;
     }
 
-    @Column(name="customer_id", pkOrdinal = 0)
-    public void setCustomerId(int customerId) {
+    @Column(name="CustomerId", pkOrdinal = 0)
+    public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
     }
 
