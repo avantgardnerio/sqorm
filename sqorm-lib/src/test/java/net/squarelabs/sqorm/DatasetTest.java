@@ -33,19 +33,19 @@ public class DatasetTest extends DbIntegrationTest {
             DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.model");
 
             // Add records
+            UUID aid = UUID.randomUUID();
+            UUID bid = UUID.randomUUID();
             try(Persistor per = new Persistor(db, con)) {
-                UUID aid = UUID.randomUUID();
-                UUID bid = UUID.randomUUID();
                 per.persist(new Customer(aid, "alice"));
                 per.persist(new Customer(bid, "bob"));
                 per.persist(new Order(aid));
-                per.persist(new Order(bid));
+                per.persist(new Order(aid));
             }
 
             // Select from tables
             QueryCache cache = new QueryCache(driver);
             Map<String,Object> parms = new HashMap<>();
-            parms.put("CustomerId", 1);
+            parms.put("CustomerId", aid);
             Dataset ds = new Dataset(db);
             ds.fill(cache, con, "GetOrdersByCustomer", parms);
             Assert.assertEquals("All parents iterable", 1, ds.ensureRecordset(Customer.class).size());

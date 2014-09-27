@@ -54,8 +54,9 @@ public class QueryCache {
                 if(!parms.containsKey(parmName)) {
                     throw new RuntimeException("Value not specified for parameter: " + parmName);
                 }
-                Object val = parms.get(parmName);
-                stmt.setObject(i++, val);
+                Object javaVal = parms.get(parmName);
+                Object sqlVal = TypeConverter.javaToSql(javaVal);
+                stmt.setObject(i++, sqlVal);
             }
         } catch (Exception ex) {
             stmt.close();

@@ -132,8 +132,9 @@ public class TableSchema {
         try (PreparedStatement stmt = con.prepareStatement(updateQuery)) {
             int idx = 1;
             for (ColumnSchema col : updateColumns.values()) {
-                Object val = col.get(record);
-                stmt.setObject(idx++, val);
+                Object javaVal = col.get(record);
+                Object sqlVal = TypeConverter.javaToSql(col.getType(), javaVal);
+                stmt.setObject(idx++, sqlVal);
             }
             for (ColumnSchema col : idColumns) {
                 Object val = col.get(record);

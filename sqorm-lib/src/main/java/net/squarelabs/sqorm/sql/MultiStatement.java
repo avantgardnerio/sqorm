@@ -50,8 +50,9 @@ public class MultiStatement implements PreparedStatement {
         PreparedStatement stmt = getCurrentStatement();
         try {
             return stmt.executeQuery();
-        } catch (Exception ex) {
-            throw new RuntimeException("Error running query: " + stmt, ex);
+        } catch (SQLException ex) {
+            //throw new RuntimeException("Error running query: " + stmt, ex);
+            throw ex;
         }
     }
 

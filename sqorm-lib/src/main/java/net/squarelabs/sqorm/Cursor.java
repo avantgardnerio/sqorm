@@ -54,7 +54,6 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
             Object record = clazz.newInstance();
             int colCount = metaData.getColumnCount();
             for (int colIndex = 2; colIndex <= colCount; colIndex++) {
-                Object sqlVal = resultSet.getObject(colIndex);
                 String colName = metaData.getColumnLabel(colIndex);
                 ColumnSchema col = table.getColumn(colName);
                 if(col == null) {
@@ -62,7 +61,7 @@ public class Cursor implements Iterable<Object>, Iterator<Object> {
                 }
                 Object javaVal;
                 try {
-                    javaVal = TypeConverter.sqlToJava(col.getType(), sqlVal);
+                    javaVal = TypeConverter.sqlToJava(col.getType(), resultSet, colIndex);
                 } catch (Exception ex) {
                     throw new RuntimeException("Error converting [" + table.getName() + "].[" + colName + "]", ex);
                 }
