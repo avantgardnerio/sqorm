@@ -1,6 +1,6 @@
 -- Tables
 SELECT
-  'net.squarelabs.sqorm.codegen.model.Table' AS `classpath`,
+  'net.squarelabs.sqorm.codegen.model.Table' AS classpath,
   tab.table_name
 FROM INFORMATION_SCHEMA.TABLES tab
 where tab.table_schema='sqorm'
@@ -8,18 +8,16 @@ where tab.table_schema='sqorm'
 
 -- Columns
 SELECT
-  'net.squarelabs.sqorm.codegen.model.Column' AS `classpath`,
+  'net.squarelabs.sqorm.codegen.model.Column' AS classpath,
   table_name,
   column_name,
   data_type,
   character_maximum_length,
   (CASE WHEN is_nullable = 'YES' THEN TRUE
-   ELSE FALSE END)                            AS `is_nullable`,
+   ELSE FALSE END)                            AS is_nullable,
   numeric_precision,
   numeric_scale,
-  column_default,
-  (CASE WHEN column_key = 'PRI' THEN 1
-   ELSE 0 END)                                AS `pk_ordinal`
+  column_default
 FROM INFORMATION_SCHEMA.COLUMNS col
 where col.table_schema='sqorm'
 ;

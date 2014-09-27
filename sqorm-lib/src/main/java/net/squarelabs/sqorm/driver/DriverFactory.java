@@ -15,7 +15,7 @@ public class DriverFactory {
             case "MySQL":
                 return new MySqlDriver();
             case "Microsoft SQL Server":
-                throw new RuntimeException("MS-SQL not yet supported!");
+                return new MsSqlDriver();
             default:
                 throw new RuntimeException("Unknown database type!");
         }

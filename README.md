@@ -52,14 +52,15 @@ Done
 
 In Progress
 -----------
+* MS-SQL support
+* PostGres support
 * POJO codegen
 * Fluent DataSet query language
 * Example Java + JS app to load graph and serialize to JSON
-* PostGres support
 
 TODO
 ----
-* Oracle, MS-SQL
+* Oracle support
 * Persistence ordering and/or deferred constraints
 * Dirty record tracking
 * Stored procedure support
