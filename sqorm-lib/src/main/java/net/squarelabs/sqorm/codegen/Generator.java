@@ -81,6 +81,9 @@ public class Generator {
         sb.append("import java.util.ArrayList;\n");
         sb.append("import java.util.List;\n");
         sb.append("import java.util.UUID;\n");
+        sb.append("import java.time.Instant;\n");
+        sb.append("import java.util.Collection;\n");
+        sb.append("import net.squarelabs.sqorm.annotation.Association;\n");
         sb.append("\n");
         sb.append("@net.squarelabs.sqorm.annotation.Table(name = \"" + table.getName() + "\")\n");
         sb.append("public class " + table.getName() + " {\n");

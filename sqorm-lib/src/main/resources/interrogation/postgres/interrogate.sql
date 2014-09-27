@@ -11,9 +11,17 @@ SELECT
   'net.squarelabs.sqorm.codegen.model.Column' AS classpath,
   table_name,
   column_name,
-  data_type,
-  CASE WHEN column_default LIKE 'nextval%' THEN TRUE
-  ELSE FALSE END                              AS auto_increment
+  case
+    when data_type='character varying' then 'String'
+    when data_type='integer' then 'int'
+    when data_type='uuid' then 'UUID'
+    when data_type='timestamp without time zone' then 'Instant'
+    else data_type
+  end as data_type,
+  CASE
+    WHEN column_default LIKE 'nextval%' THEN TRUE
+    ELSE FALSE
+  END                              AS auto_increment
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_CATALOG = 'sqorm' AND TABLE_SCHEMA = 'public'
 ORDER BY table_name, column_name;
