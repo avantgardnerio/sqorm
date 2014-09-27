@@ -2,27 +2,40 @@ package net.squarelabs.sqorm.driver;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
-public interface DbDriver {
-    public List<String> getTableNames(Connection con) throws SQLException;
+public abstract class DbDriver {
 
-    public void dropTables(Connection con) throws SQLException;
+    /**
+     * Drops and recreates the given database
+     *
+     * @param con The connection to use
+     * @param name The database to drop and re-create
+     * @throws SQLException
+     */
+    public void resetDb(Connection con, String name) throws SQLException {
+        try(Statement stmt = con.createStatement()) {
+            stmt.execute(String.format("drop database if exists %s%s%s;", se(), name, ee()));
+            stmt.execute(String.format("create database %s%s%s;", se(), name, ee()));
+            stmt.execute(String.format("use %s%s%s;", se(), name, ee()));
+        }
+    }
 
-    public String name();
+    public abstract String name();
 
     /**
      * @return Start escape char (e.g. "[", "`", "'")
      */
-    public char se();
+    public abstract char se();
 
     /**
      * @return End escape char (e.g. "]", "`", "'")
      */
-    public char ee();
+    public abstract char ee();
 
     /**
      * @return true if DB supports Multiple Active Result Sets
      */
-    public boolean mars();
+    public abstract boolean mars();
 }

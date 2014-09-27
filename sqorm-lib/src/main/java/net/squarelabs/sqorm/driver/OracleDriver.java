@@ -6,21 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OracleDriver implements DbDriver {
-
-    public OracleDriver() {
-
-    }
-
-    @Override
-    public List<String> getTableNames(Connection con) throws SQLException {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void dropTables(Connection con) throws SQLException {
-        throw new NotImplementedException();
-    }
+public class OracleDriver extends DbDriver {
 
     @Override
     public String name() {

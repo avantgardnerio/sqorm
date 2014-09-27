@@ -24,11 +24,12 @@ public class DbIntegrationTest implements AutoCloseable {
         pool = new BasicDataSource();
         pool.setDriverClassName(driverClass);
         pool.setUrl(url);
+        pool.setDefaultCatalog("sqorm");
         instances.add(this);
 
         try(Connection con = pool.getConnection()) {
             DbDriver driver = DriverFactory.getDriver(con);
-            driver.dropTables(con);
+            driver.resetDb(con, "sqorm");
 
             // Rebuild DB
             Flyway flyway = new Flyway();
@@ -67,8 +68,8 @@ public class DbIntegrationTest implements AutoCloseable {
     @Parameterized.Parameters
     public static Collection getPools() {
         return Arrays.asList(new Object[][]{
-                {"com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1/sqorm?allowMultiQueries=true&user=sqorm&password=sqorm"},
-                {"org.postgresql.Driver", "jdbc:postgresql://127.0.0.1/sqorm?user=sqorm&amp;password=sqorm"}
+                {"com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1?allowMultiQueries=true&user=sqorm&password=sqorm"},
+                {"org.postgresql.Driver", "jdbc:postgresql://127.0.0.1?user=sqorm&amp;password=sqorm"}
         });
     }
 
