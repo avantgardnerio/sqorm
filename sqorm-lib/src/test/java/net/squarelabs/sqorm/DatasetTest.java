@@ -1,14 +1,14 @@
 package net.squarelabs.sqorm;
 
 import com.googlecode.flyway.core.Flyway;
-import net.squarelabs.sqorm.model.Customer;
-import net.squarelabs.sqorm.model.Order;
 import net.squarelabs.sqorm.dataset.Dataset;
 import net.squarelabs.sqorm.driver.DbDriver;
 import net.squarelabs.sqorm.driver.DriverFactory;
+import net.squarelabs.sqorm.model.Customer;
+import net.squarelabs.sqorm.model.Order;
 import net.squarelabs.sqorm.schema.DbSchema;
 import net.squarelabs.sqorm.sql.QueryCache;
-import org.apache.commons.dbcp.BasicDataSource;
+import net.squarelabs.sqorm.test.TestBase;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +16,11 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatasetTest {
+public class DatasetTest extends TestBase {
+
+    public DatasetTest(String driverClass, String url) {
+        super(driverClass, url);
+    }
 
     /**
      * This is sort of becoming the "god test"... need to split apart into real unit tests.
@@ -24,21 +28,14 @@ public class DatasetTest {
      */
     @Test
     public void canIterate() throws Exception {
-        // TODO: Move connection stuff into test base class
-        BasicDataSource pool = new BasicDataSource();
-        pool.setDriverClassName("com.mysql.jdbc.Driver");
-        pool.setUsername("sqorm");
-        pool.setPassword("sqorm");
-        pool.setUrl("jdbc:mysql://127.0.0.1/sqorm?allowMultiQueries=true");
-
-        try(Connection con = pool.getConnection()) {
+        try(Connection con = getPool().getConnection()) {
             // Clean DB
             DbDriver driver = DriverFactory.getDriver(con);
             driver.dropTables(con);
 
             // Rebuild DB
             Flyway flyway = new Flyway();
-            flyway.setDataSource(pool);
+            flyway.setDataSource(getPool());
             flyway.setLocations("ddl/" + driver.name());
             flyway.migrate();
             DbSchema db = new DbSchema(driver, "net.squarelabs.sqorm.model");
