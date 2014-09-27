@@ -9,6 +9,11 @@ import java.util.List;
 public class PostGresDriver extends DbDriver {
 
     @Override
+    public String rootDb() {
+        return "postgres";
+    }
+
+    @Override
     public String name() {
         return "postgres";
     }

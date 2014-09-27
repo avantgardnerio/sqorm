@@ -22,7 +22,7 @@ public class Column {
     private boolean isNullable;
 
     private boolean isIdentity;
-    private boolean isPrimaryKey;
+    private Integer pkOrdinal;
     private boolean isArray;
 
     private Table parentTable;
@@ -137,14 +137,14 @@ public class Column {
         this.increment = increment;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "column_key")
-    public boolean isPrimaryKey() {
-        return isPrimaryKey;
+    @net.squarelabs.sqorm.annotation.Column(name = "pk_ordinal")
+    public Integer getPrimaryKey() {
+        return pkOrdinal;
     }
 
-    @net.squarelabs.sqorm.annotation.Column(name = "column_key")
-    public void setPrimaryKey(boolean isPrimaryKey) {
-        this.isPrimaryKey = isPrimaryKey;
+    @net.squarelabs.sqorm.annotation.Column(name = "pk_ordinal")
+    public void setPrimaryKey(Integer value) {
+        this.pkOrdinal = value;
     }
 
     @net.squarelabs.sqorm.annotation.Column(name = "is_array")

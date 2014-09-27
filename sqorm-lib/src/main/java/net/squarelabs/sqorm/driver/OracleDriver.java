@@ -23,8 +23,4 @@ public class OracleDriver extends DbDriver {
         return '\"';
     }
 
-    @Override
-    public boolean mars() {
-        return true;
-    }
 }

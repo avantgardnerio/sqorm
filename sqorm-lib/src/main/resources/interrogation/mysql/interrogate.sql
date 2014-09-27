@@ -1,9 +1,10 @@
 -- Tables
 SELECT
   'net.squarelabs.sqorm.codegen.model.Table' AS `classpath`,
-  table_name
-FROM INFORMATION_SCHEMA.TABLES
-WHERE table_schema = 'sqorm';
+  tab.table_name
+FROM INFORMATION_SCHEMA.TABLES tab
+where tab.table_schema='sqorm'
+;
 
 -- Columns
 SELECT
@@ -18,9 +19,10 @@ SELECT
   numeric_scale,
   column_default,
   (CASE WHEN column_key = 'PRI' THEN 1
-   ELSE 0 END)                                AS `column_key`
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_schema = 'sqorm';
+   ELSE 0 END)                                AS `pk_ordinal`
+FROM INFORMATION_SCHEMA.COLUMNS col
+where col.table_schema='sqorm'
+;
 
 -- Relations
 SELECT

@@ -18,8 +18,11 @@ public abstract class DbDriver {
         try(Statement stmt = con.createStatement()) {
             stmt.execute(String.format("drop database if exists %s%s%s;", se(), name, ee()));
             stmt.execute(String.format("create database %s%s%s;", se(), name, ee()));
-            stmt.execute(String.format("use %s%s%s;", se(), name, ee()));
         }
+    }
+
+    public String rootDb() {
+        return "information_schema";
     }
 
     public abstract String name();
@@ -37,5 +40,7 @@ public abstract class DbDriver {
     /**
      * @return true if DB supports Multiple Active Result Sets
      */
-    public abstract boolean mars();
+    public boolean mars() {
+        return true;
+    }
 }

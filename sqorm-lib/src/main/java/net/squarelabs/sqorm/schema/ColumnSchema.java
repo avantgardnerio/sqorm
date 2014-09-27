@@ -13,6 +13,10 @@ public class ColumnSchema {
     private final boolean isVersion;
 
     public ColumnSchema(String name, Method getter, Method setter, int pkOrdinal, boolean isVersion) {
+        if(getter == null) {
+            throw new RuntimeException("No getter for column: " + name);
+        }
+
         this.name = name;
         this.getter = getter;
         this.setter = setter;

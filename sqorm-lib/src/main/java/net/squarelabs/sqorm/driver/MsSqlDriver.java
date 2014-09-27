@@ -23,8 +23,4 @@ public class MsSqlDriver extends DbDriver {
         return ']';
     }
 
-    @Override
-    public boolean mars() {
-        return true;
-    }
 }

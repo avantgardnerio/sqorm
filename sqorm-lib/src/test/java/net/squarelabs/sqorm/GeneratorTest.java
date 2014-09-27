@@ -13,8 +13,8 @@ import java.util.Collection;
 
 public class GeneratorTest extends DbIntegrationTest {
 
-    public GeneratorTest(String driverClass, String url) {
-        super(driverClass, url);
+    public GeneratorTest(String driverClass, String url, String dropUrl) {
+        super(driverClass, url, dropUrl);
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.*;
 
 @RunWith(Parameterized.class)
@@ -18,18 +19,29 @@ public class DbIntegrationTest implements AutoCloseable {
 
     private final BasicDataSource pool;
 
+    private static final String username = "sqorm";
+    private static final String password = "sqorm";
+
     private static final List<DbIntegrationTest> instances = Collections.synchronizedList(new ArrayList<>());
 
-    public DbIntegrationTest(String driverClass, String url) {
-        pool = new BasicDataSource();
-        pool.setDriverClassName(driverClass);
-        pool.setUrl(url);
-        pool.setDefaultCatalog("sqorm");
-        instances.add(this);
+    public DbIntegrationTest(String driverClass, String url, String dropUrl) {
+        if(dropUrl == null) {
+            dropUrl = url; // PostGreSQL doesn't support switching databases, so we need to do this work-around
+        }
 
-        try(Connection con = pool.getConnection()) {
-            DbDriver driver = DriverFactory.getDriver(con);
-            driver.resetDb(con, "sqorm");
+        try(Connection dropCon = DriverManager.getConnection(dropUrl, username, password)) {
+            // Drop DB
+            DbDriver driver = DriverFactory.getDriver(dropCon);
+            driver.resetDb(dropCon, "sqorm");
+
+            // Create connection pool
+            pool = new BasicDataSource();
+            pool.setDriverClassName(driverClass);
+            pool.setUrl(url);
+            pool.setDefaultCatalog("sqorm");
+            pool.setUsername(username);
+            pool.setPassword(password);
+            instances.add(this);
 
             // Rebuild DB
             Flyway flyway = new Flyway();
@@ -37,7 +49,7 @@ public class DbIntegrationTest implements AutoCloseable {
             flyway.setLocations("ddl/" + driver.name());
             flyway.migrate();
         } catch (Exception ex) {
-            throw new RuntimeException("Error setting up database!", ex);
+            throw new RuntimeException("Error dropping database!", ex);
         }
     }
 
@@ -67,9 +79,10 @@ public class DbIntegrationTest implements AutoCloseable {
 
     @Parameterized.Parameters
     public static Collection getPools() {
+        // TODO: Throw this in a resource file
         return Arrays.asList(new Object[][]{
-                {"com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1?allowMultiQueries=true&user=sqorm&password=sqorm"},
-                {"org.postgresql.Driver", "jdbc:postgresql://127.0.0.1?user=sqorm&amp;password=sqorm"}
+                {"com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1?allowMultiQueries=true", null},
+                {"org.postgresql.Driver", "jdbc:postgresql://127.0.0.1/sqorm", "jdbc:postgresql://127.0.0.1/postgres"}
         });
     }
 

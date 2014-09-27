@@ -21,8 +21,4 @@ public class MySqlDriver extends DbDriver {
         return '`';
     }
 
-    @Override
-    public boolean mars() {
-        return true;
-    }
 }

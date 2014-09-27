@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class DatasetTest extends DbIntegrationTest {
 
-    public DatasetTest(String driverClass, String url) {
-        super(driverClass, url);
+    public DatasetTest(String driverClass, String url, String dropUrl) {
+        super(driverClass, url, dropUrl);
     }
 
     /**
