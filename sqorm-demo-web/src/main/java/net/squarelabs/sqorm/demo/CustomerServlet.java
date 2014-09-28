@@ -29,7 +29,7 @@ public class CustomerServlet extends HttpServlet {
                 parms.put("CustomerId", customerId);
                 ds.fill(AppContext.getQueryCache(), con, "GetOrdersByCustomer", parms);
 
-                customer customer = ds.from(customer.class).top();
+                Customer customer = ds.from(Customer.class).top();
                 mapper.writeValue(resp.getOutputStream(), customer);
             }
         } catch (Exception ex) {
