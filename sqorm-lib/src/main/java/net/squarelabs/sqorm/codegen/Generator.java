@@ -136,16 +136,21 @@ public class Generator {
 
             String foreignClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getForeignTableName());
             String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getForeignTableName());
+            String childName = varName + "Children";
+            String colName = "Collection<" + foreignClassName + ">";
+
+            sb.append("\tprivate " + colName + " " + childName + ";\n");
+            sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
-            sb.append("    public Collection<" + foreignClassName + "> get" + foreignClassName + "Children() {\n");
-            sb.append("        return " + varName + "Children;\n");
+            sb.append("    public " + colName + " get" + foreignClassName + "Children() {\n");
+            sb.append("        return " + childName + ";\n");
             sb.append("    }\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
-            sb.append("    public void set" + foreignClassName + "(Collection<" + foreignClassName + "> val) {\n");
-            sb.append("        " + varName + "Children = val;\n");
+            sb.append("    public void set" + foreignClassName + "Children(" + colName + " val) {\n");
+            sb.append("        " + childName + " = val;\n");
             sb.append("    }\n");
         }
 
