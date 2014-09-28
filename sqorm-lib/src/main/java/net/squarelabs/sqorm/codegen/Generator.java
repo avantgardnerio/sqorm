@@ -116,20 +116,10 @@ public class Generator {
             sb.append("\n");
         }
 
-        // Parent relationships
+        // Child relationships
+        sb.append("    // ------------------------------------------------------- Children -----------------------------------------------\n");
         for (Relation rel : table.getParentRelations()) {
-            List<String> primaryFieldNames = rel.getColumnChildren().stream()
-                    .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
-                    .map(RelationField::getPrimaryColumnName)
-                    .collect(Collectors.toList());
-            List<String> foreignFieldNames = rel.getColumnChildren().stream()
-                    .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
-                    .map(RelationField::getForeignColumnName)
-                    .collect(Collectors.toList());
-            String annotation = String.format(
-                    "@Association(name = \"%s\", primaryKey = \"%s\", foreignKey = \"%s\", isForeignKey = false)",
-                    rel.getName(), Joiner.on(",").join(primaryFieldNames), Joiner.on(",").join(foreignFieldNames));
-
+            String annotation = buildAnnotation(rel, false);
             String foreignClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getForeignTableName());
             String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getForeignTableName());
             String childName = varName + "Children";
@@ -149,15 +139,63 @@ public class Generator {
             sb.append("        " + childName + " = val;\n");
             sb.append("    }\n");
         }
+        sb.append("\n");
 
-        // Child relationships
+        // Parent relationships
+        sb.append("    // ------------------------------------------------------- Parents ------------------------------------------------\n");
         for (Relation rel : table.getChildRelations()) {
+            String annotation = buildAnnotation(rel, true);
+            String primaryClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getPrimaryTableName());
+            String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getPrimaryTableName());
+            String parentName = varName + "Parent";
+
+            sb.append("\tprivate " + primaryClassName + " " + parentName + ";\n");
+            sb.append("\n");
+
+            sb.append("\t" + annotation + "\n");
+            sb.append("    public " + primaryClassName + " get" + primaryClassName + "Parent() {\n");
+            sb.append("        return " + parentName + ";\n");
+            sb.append("    }\n");
+            sb.append("\n");
+
+            sb.append("\t" + annotation + "\n");
+            sb.append("    public void set" + primaryClassName + "Parent(" + primaryClassName + " val) {\n");
+            sb.append("        " + parentName + " = val;\n");
+            sb.append("    }\n");
         }
+        sb.append("\n");
 
         // Cleanup
         sb.append("}");
 
         return sb.toString();
+    }
+
+    private static String buildAnnotation(Relation rel, boolean isForeignKey) {
+        String pk = getPrimaryNames(rel);
+        String fk = getForeignNames(rel);
+        String annotation = String.format(
+                "@Association(name = \"%s\", primaryKey = %s, foreignKey = %s, isForeignKey = %s)",
+                rel.getName(), pk, fk, isForeignKey);
+        return annotation;
+    }
+
+    private static String getPrimaryNames(Relation rel) {
+        List<String> names = rel.getColumnChildren().stream()
+                .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
+                .map(RelationField::getPrimaryColumnName)
+                .collect(Collectors.toList());
+        String fields = Joiner.on("\",\"").join(names);
+        return "{\"" + fields + "\"}";
+    }
+
+    private static String getForeignNames(Relation rel) {
+        List<String> names = rel.getColumnChildren().stream()
+                .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
+                .map(RelationField::getForeignColumnName)
+                .collect(Collectors.toList());
+        String fields = Joiner.on("\",\"").join(names);
+        return "{\"" + fields + "\"}";
     }
 
 }

@@ -49,15 +49,15 @@ Done
 * Database specific resource file overrides
 * In-memory hash-map indexing
 * Mapping relationships on load
+* POJO codegen
 
 In Progress
 -----------
-* POJO codegen
-* Fluent DataSet query language
 * Example Java + JS app to load graph and serialize to JSON
 
 TODO
 ----
+* Fluent DataSet query language
 * Oracle support
 * Persistence ordering and/or deferred constraints
 * Dirty record tracking
