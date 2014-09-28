@@ -1,26 +1,26 @@
 select
-  'net.squarelabs.sqorm.demo.customer' as classpath,
+  'net.squarelabs.sqorm.demo.Customer' as classpath,
   c.*
-from customer c
-where c.customer_id=@CustomerId
+from [Customer] c
+where c.[CustomerId]=@CustomerId
 ;
 
 select
-  'net.squarelabs.sqorm.demo.orders' as classpath,
+  'net.squarelabs.sqorm.demo.Orders' as classpath,
   o.*
-from customer c
-inner join orders o
-  on o.customer_id=c.customer_id
-where c.customer_id=@CustomerId
+from [Customer] c
+inner join [Orders] o
+on o.customer_id=c.[CustomerId]
+where c.[CustomerId]=@CustomerId
 ;
 
 select
-  'net.squarelabs.sqorm.demo.orderdetails' as classpath,
+  'net.squarelabs.sqorm.demo.OrderDetails' as classpath,
   od.*
-from customer c
-inner join orders o
-  on o.customer_id=c.customer_id
-inner join `OrderDetails` od
-  on od.`OrderId`=o.`OrderId`
-where c.customer_id=@CustomerId
+from [Customer] c
+inner join [Orders] o
+on o.customer_id=c.[CustomerId]
+inner join [OrderDetails] od
+on od.order_id=o.order_id
+where c.[CustomerId]=@CustomerId
 ;

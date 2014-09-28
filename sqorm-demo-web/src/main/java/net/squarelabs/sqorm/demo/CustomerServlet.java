@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class CustomerServlet extends HttpServlet {
 
@@ -25,7 +26,7 @@ public class CustomerServlet extends HttpServlet {
                 Dataset ds = new Dataset(AppContext.getSchema());
 
                 Map<String,Object> parms = new HashMap<>();
-                int customerId = Integer.parseInt(req.getParameter("customerId"));
+                UUID customerId = UUID.fromString(req.getParameter("customerId"));
                 parms.put("CustomerId", customerId);
                 ds.fill(AppContext.getQueryCache(), con, "GetOrdersByCustomer", parms);
 

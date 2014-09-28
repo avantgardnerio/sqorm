@@ -88,6 +88,7 @@ public class Generator {
         sb.append("import java.time.Instant;\n");
         sb.append("import java.util.Collection;\n");
         sb.append("import net.squarelabs.sqorm.annotation.Association;\n");
+        sb.append("import org.codehaus.jackson.annotate.JsonIgnore;\n");
         sb.append("\n");
         sb.append("@net.squarelabs.sqorm.annotation.Table(name = \"" + table.getName() + "\")\n");
         sb.append("public class " + className + " {\n");
@@ -153,12 +154,14 @@ public class Generator {
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
+            sb.append("\t@JsonIgnore\n");
             sb.append("    public " + primaryClassName + " get" + primaryClassName + "Parent() {\n");
             sb.append("        return " + parentName + ";\n");
             sb.append("    }\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
+            sb.append("\t@JsonIgnore\n");
             sb.append("    public void set" + primaryClassName + "Parent(" + primaryClassName + " val) {\n");
             sb.append("        " + parentName + " = val;\n");
             sb.append("    }\n");
