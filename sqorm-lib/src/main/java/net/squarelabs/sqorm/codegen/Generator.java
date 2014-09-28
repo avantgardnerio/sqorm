@@ -81,6 +81,7 @@ public class Generator {
 
         sb.append("package " + packageName + ";\n");
         sb.append("\n");
+        sb.append("import " + packageName + ".*;\n");
         sb.append("import java.util.ArrayList;\n");
         sb.append("import java.util.List;\n");
         sb.append("import java.util.UUID;\n");
@@ -117,11 +118,6 @@ public class Generator {
 
         // Parent relationships
         for (Relation rel : table.getParentRelations()) {
-
-        }
-
-        // Child relationships
-        for (Relation rel : table.getChildRelations()) {
             List<String> primaryFieldNames = rel.getColumnChildren().stream()
                     .sorted((a, b) -> a.getOrdinalPosition() - b.getOrdinalPosition())
                     .map(RelationField::getPrimaryColumnName)
@@ -152,6 +148,10 @@ public class Generator {
             sb.append("    public void set" + foreignClassName + "Children(" + colName + " val) {\n");
             sb.append("        " + childName + " = val;\n");
             sb.append("    }\n");
+        }
+
+        // Child relationships
+        for (Relation rel : table.getChildRelations()) {
         }
 
         // Cleanup
