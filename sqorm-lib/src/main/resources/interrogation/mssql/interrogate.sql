@@ -3,7 +3,6 @@ SELECT
   'net.squarelabs.sqorm.codegen.model.Table' AS classpath,
   table_name
 FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_CATALOG = 'sqorm'
 ORDER BY table_name;
 
 -- Columns

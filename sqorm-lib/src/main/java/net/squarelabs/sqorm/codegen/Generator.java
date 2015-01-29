@@ -35,8 +35,13 @@ public class Generator {
         String packageName = args[1];
         String driver = args[2];
         String conString = args[3];
+        System.out.println("root=" + root);
+        System.out.println("packageName=" + packageName);
+        System.out.println("driver=" + driver);
+        System.out.println("conString=" + conString);
 
         // Get package directory
+        System.out.println("Creating folders...");
         String[] folders = packageName.split("\\.");
         File path = new File(root);
         for (String folder : folders) {
@@ -45,11 +50,13 @@ public class Generator {
         path.mkdirs();
 
         // Generate files
+        System.out.println("Loading driver: " + driver);
         Class.forName(driver);
         System.out.println("Connecting to database...");
         try (Connection con = DriverManager.getConnection(conString)) {
             System.out.println("Loading schema...");
             Collection<Table> tables = loadSchema(con);
+            System.out.println("Generating tables...");
             for (Table table : tables) {
                 String fileName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName()) + ".java";
                 System.out.println("Generating " + fileName);
