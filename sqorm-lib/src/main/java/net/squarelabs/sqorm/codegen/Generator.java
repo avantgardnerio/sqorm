@@ -19,7 +19,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Generator {
@@ -80,10 +82,10 @@ public class Generator {
     }
 
     public static String safeName(String name) {
-        if("class".equals(name)) {
+        if ("class".equals(name)) {
             return "clazz";
         }
-        if("Class".equals(name)) {
+        if ("Class".equals(name)) {
             return "Clazz";
         }
         return name;
@@ -134,24 +136,37 @@ public class Generator {
 
         // Child relationships
         sb.append("    // ------------------------------------------------------- Children -----------------------------------------------\n");
+        final Map<String, Integer> childRelCounts = new HashMap<>();
+        for (Relation rel : table.getParentRelations()) {
+            String key = rel.getForeignTableName();
+            Integer val = childRelCounts.get(key);
+            childRelCounts.put(key, val == null ? 1 : val + 1);
+        }
         for (Relation rel : table.getParentRelations()) {
             String annotation = buildAnnotation(rel, false);
             String foreignClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getForeignTableName());
             String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getForeignTableName());
             String childName = varName + "Children";
             String colName = "Collection<" + foreignClassName + ">";
+            int relCount = childRelCounts.get(rel.getForeignTableName());
+            String funcName = foreignClassName + "Children";
+            if(relCount > 1) {
+                String suffix = "By" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getName()); // HACK: Is there a better way to handle this?
+                funcName += suffix;
+                childName += suffix;
+            }
 
             sb.append("\tprivate " + colName + " " + childName + ";\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
-            sb.append("    public " + colName + " get" + foreignClassName + "Children() {\n");
+            sb.append("    public " + colName + " get" + funcName + "() {\n");
             sb.append("        return " + childName + ";\n");
             sb.append("    }\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
-            sb.append("    public void set" + foreignClassName + "Children(" + colName + " val) {\n");
+            sb.append("    public void set" + funcName + "(" + colName + " val) {\n");
             sb.append("        " + childName + " = val;\n");
             sb.append("    }\n");
         }
@@ -159,25 +174,38 @@ public class Generator {
 
         // Parent relationships
         sb.append("    // ------------------------------------------------------- Parents ------------------------------------------------\n");
+        final Map<String, Integer> childParentCounts = new HashMap<>();
+        for (Relation rel : table.getChildRelations()) {
+            String key = rel.getPrimaryTableName();
+            Integer val = childParentCounts.get(key);
+            childParentCounts.put(key, val == null ? 1 : val + 1);
+        }
         for (Relation rel : table.getChildRelations()) {
             String annotation = buildAnnotation(rel, true);
             String primaryClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getPrimaryTableName());
             String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getPrimaryTableName());
             String parentName = varName + "Parent";
+            int relCount = childParentCounts.get(rel.getPrimaryTableName());
+            String funcName = primaryClassName + "Parent";
+            if(relCount > 1) {
+                String suffix = "By" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getName()); // HACK: Is there a better way to handle this?
+                funcName += suffix;
+                parentName += suffix;
+            }
 
             sb.append("\tprivate " + primaryClassName + " " + parentName + ";\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
             sb.append("\t@JsonIgnore\n");
-            sb.append("    public " + primaryClassName + " get" + primaryClassName + "Parent() {\n");
+            sb.append("    public " + primaryClassName + " get" + funcName + "() {\n");
             sb.append("        return " + parentName + ";\n");
             sb.append("    }\n");
             sb.append("\n");
 
             sb.append("\t" + annotation + "\n");
             sb.append("\t@JsonIgnore\n");
-            sb.append("    public void set" + primaryClassName + "Parent(" + primaryClassName + " val) {\n");
+            sb.append("    public void set" + funcName + "(" + primaryClassName + " val) {\n");
             sb.append("        " + parentName + " = val;\n");
             sb.append("    }\n");
         }
