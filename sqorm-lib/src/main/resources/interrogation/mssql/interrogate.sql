@@ -12,6 +12,7 @@ SELECT
   tab.name                                    AS table_name,
   col.name                                    AS column_name,
   CASE
+  WHEN typ.name = 'image' THEN 'Byte[]'
   WHEN typ.name = 'varbinary' THEN 'Byte[]'
   WHEN typ.name = 'nchar' THEN 'BigDecimal'
   WHEN typ.name = 'money' THEN 'BigDecimal'

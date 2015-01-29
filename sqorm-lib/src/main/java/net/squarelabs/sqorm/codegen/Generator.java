@@ -19,11 +19,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Generator {
 
@@ -86,6 +83,9 @@ public class Generator {
         if("class".equals(name)) {
             return "clazz";
         }
+        if("Class".equals(name)) {
+            return "Clazz";
+        }
         return name;
     }
 
@@ -121,12 +121,12 @@ public class Generator {
             String type = col.getDataType();
 
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
-            sb.append("    public " + type + " get" + col.getName() + "() {\n");
+            sb.append("    public " + type + " get" + safeName(col.getName()) + "() {\n");
             sb.append("        return " + safeName(col.getName()) + ";\n");
             sb.append("    }\n");
             sb.append("\n");
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
-            sb.append("    public void set" + col.getName() + "(" + type + " val) {\n");
+            sb.append("    public void set" + safeName(col.getName()) + "(" + type + " val) {\n");
             sb.append("        this." + safeName(col.getName()) + " = val;\n");
             sb.append("    }\n");
             sb.append("\n");
