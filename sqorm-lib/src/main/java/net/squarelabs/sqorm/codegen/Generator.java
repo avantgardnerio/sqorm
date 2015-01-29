@@ -82,6 +82,13 @@ public class Generator {
         return ds.ensureRecordset(Table.class).all();
     }
 
+    public static String safeName(String name) {
+        if("class".equals(name)) {
+            return "clazz";
+        }
+        return name;
+    }
+
     public static String generateTableSource(Table table, String packageName) {
         String className = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName());
         StringBuilder sb = new StringBuilder();
@@ -89,6 +96,7 @@ public class Generator {
         sb.append("package " + packageName + ";\n");
         sb.append("\n");
         sb.append("import " + packageName + ".*;\n");
+        sb.append("import java.math.BigDecimal;\n");
         sb.append("import java.util.ArrayList;\n");
         sb.append("import java.util.List;\n");
         sb.append("import java.util.UUID;\n");
@@ -104,7 +112,7 @@ public class Generator {
         // Private variables for column values
         for (Column col : table.getColumnChildren()) {
             String type = col.getDataType();
-            sb.append("    private " + type + " " + col.getName() + ";\n");
+            sb.append("    private " + type + " " + safeName(col.getName()) + ";\n");
         }
         sb.append("\n");
 
@@ -114,12 +122,12 @@ public class Generator {
 
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
             sb.append("    public " + type + " get" + col.getName() + "() {\n");
-            sb.append("        return " + col.getName() + ";\n");
+            sb.append("        return " + safeName(col.getName()) + ";\n");
             sb.append("    }\n");
             sb.append("\n");
             sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
             sb.append("    public void set" + col.getName() + "(" + type + " val) {\n");
-            sb.append("        this." + col.getName() + " = val;\n");
+            sb.append("        this." + safeName(col.getName()) + " = val;\n");
             sb.append("    }\n");
             sb.append("\n");
         }

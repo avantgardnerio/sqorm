@@ -1,8 +1,9 @@
 -- Tables
 SELECT
   'net.squarelabs.sqorm.codegen.model.Table' AS classpath,
-  table_name
-FROM INFORMATION_SCHEMA.TABLES
+  tab.name                                   AS table_name
+FROM sysobjects tab
+WHERE tab.type = 'U'
 ORDER BY table_name;
 
 -- Columns
@@ -10,7 +11,27 @@ SELECT
   'net.squarelabs.sqorm.codegen.model.Column' AS classpath,
   tab.name                                    AS table_name,
   col.name                                    AS column_name,
-  typ.name                                    AS DATA_TYPE,
+  CASE
+  WHEN typ.name = 'varbinary' THEN 'Byte[]'
+  WHEN typ.name = 'nchar' THEN 'BigDecimal'
+  WHEN typ.name = 'money' THEN 'BigDecimal'
+  WHEN typ.name = 'smallmoney' THEN 'BigDecimal'
+  WHEN typ.name = 'decimal' THEN 'BigDecimal'
+  WHEN typ.name = 'bit' THEN 'Boolean'
+  WHEN typ.name = 'sysname' THEN 'String'
+  WHEN typ.name = 'varchar' THEN 'String'
+  WHEN typ.name = 'nvarchar' THEN 'String'
+  WHEN typ.name = 'text' THEN 'String'
+  WHEN typ.name = 'bigint' THEN 'Long'
+  WHEN typ.name = 'smallint' THEN 'Short'
+  WHEN typ.name = 'tinyint' THEN 'Byte'
+  WHEN typ.name = 'date' THEN 'Instant'
+  WHEN typ.name = 'datetime' THEN 'Instant'
+  WHEN typ.name = 'datetime2' THEN 'Instant'
+  WHEN typ.name = 'smalldatetime' THEN 'Instant'
+  WHEN typ.name = 'uniqueidentifier' THEN 'UUID'
+  ELSE typ.name
+  END                                         AS data_type,
   col.colstat & 1                             AS auto_increment
 FROM sysobjects tab
   INNER JOIN syscolumns col ON col.id = tab.id
