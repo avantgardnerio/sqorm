@@ -122,12 +122,17 @@ public class Generator {
         for (Column col : table.getColumnChildren()) {
             String type = col.getDataType();
 
-            sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
+            String attributes = "name=\"" + col.getName() + "\"";
+            if(col.getPkOrdinal() != null && col.getPkOrdinal() >= 0) {
+                attributes += ", pkOrdinal=" + col.getPkOrdinal();
+            }
+
+            sb.append("    @net.squarelabs.sqorm.annotation.Column(" + attributes + ")\n");
             sb.append("    public " + type + " get" + safeName(col.getName()) + "() {\n");
             sb.append("        return " + safeName(col.getName()) + ";\n");
             sb.append("    }\n");
             sb.append("\n");
-            sb.append("    @net.squarelabs.sqorm.annotation.Column(name=\"" + col.getName() + "\")\n");
+            sb.append("    @net.squarelabs.sqorm.annotation.Column(" + attributes + ")\n");
             sb.append("    public void set" + safeName(col.getName()) + "(" + type + " val) {\n");
             sb.append("        this." + safeName(col.getName()) + " = val;\n");
             sb.append("    }\n");

@@ -33,10 +33,24 @@ SELECT
   WHEN typ.name = 'uniqueidentifier' THEN 'UUID'
   ELSE typ.name
   END                                         AS data_type,
-  col.colstat & 1                             AS auto_increment
+  col.colstat & 1                             AS auto_increment,
+  case
+    when ic.key_ordinal is not null then ic.key_ordinal-1
+    else NULL
+  end as pk_ordinal
 FROM sysobjects tab
-  INNER JOIN syscolumns col ON col.id = tab.id
-  INNER JOIN systypes typ ON typ.xtype = col.xtype AND typ.xusertype = col.xusertype
+INNER JOIN syscolumns col
+  ON col.id = tab.id
+INNER JOIN systypes typ
+  ON typ.xtype = col.xtype
+  AND typ.xusertype = col.xusertype
+Inner Join sys.indexes i
+	On tab.id = i.object_id
+	And i.is_primary_key = 1
+left Join sys.index_columns ic
+	On i.object_id = ic.object_id
+	And i.index_id = ic.index_id
+	and ic.column_id=col.colid
 WHERE tab.type = 'U'
 ORDER BY table_name, column_name
 

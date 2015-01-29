@@ -8,6 +8,10 @@ import java.util.UUID;
 public class TypeConverter {
 
     public static Object sqlToJava(Class<?> clazz, ResultSet rs, int index) throws SQLException {
+        if(rs.getObject(index) == null) {
+            return null;
+        }
+
         // String
         if (clazz == String.class) {
             return rs.getString(index);

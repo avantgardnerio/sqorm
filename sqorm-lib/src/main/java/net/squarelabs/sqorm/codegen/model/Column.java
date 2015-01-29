@@ -13,6 +13,8 @@ public class Column {
 
     private boolean autoIncrement;
 
+    private Integer pkOrdinal;
+
     private Table parentTable;
 
     @net.squarelabs.sqorm.annotation.Column(name = "table_name", pkOrdinal = 0)
@@ -53,6 +55,16 @@ public class Column {
     @net.squarelabs.sqorm.annotation.Column(name = "auto_increment")
     public void setAutoIncrement(boolean value) {
         this.autoIncrement = value;
+    }
+
+    @net.squarelabs.sqorm.annotation.Column(name = "pk_ordinal")
+    public Integer getPkOrdinal() {
+        return pkOrdinal;
+    }
+
+    @net.squarelabs.sqorm.annotation.Column(name = "pk_ordinal")
+    public void setPkOrdinal(Integer pkOrdinal) {
+        this.pkOrdinal = pkOrdinal;
     }
 
     // ------------------------------------- Parent Associations ------------------------------------------------------
