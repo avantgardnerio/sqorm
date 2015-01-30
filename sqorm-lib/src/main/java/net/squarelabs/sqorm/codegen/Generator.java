@@ -57,7 +57,7 @@ public class Generator {
             Collection<Table> tables = loadSchema(con);
             System.out.println("Generating tables...");
             for (Table table : tables) {
-                String fileName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName()) + ".java";
+                String fileName = fixCase(table.getName(), true) + ".java";
                 System.out.println("Generating " + fileName);
                 String java = generateTableSource(table, packageName);
                 File file = new File(path, fileName);
@@ -92,7 +92,7 @@ public class Generator {
     }
 
     public static String generateTableSource(Table table, String packageName) {
-        String className = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, table.getName());
+        String className = fixCase(table.getName(), true);
         StringBuilder sb = new StringBuilder();
 
         sb.append("package " + packageName + ";\n");
@@ -114,13 +114,16 @@ public class Generator {
         // Private variables for column values
         for (Column col : table.getColumnChildren()) {
             String type = col.getDataType();
-            sb.append("    private " + type + " " + safeName(col.getName()) + ";\n");
+            String varName = safeName(fixCase(col.getName(), false));
+            sb.append("    private " + type + " " + varName + ";\n");
         }
         sb.append("\n");
 
         // Public accessors for column values
         for (Column col : table.getColumnChildren()) {
             String type = col.getDataType();
+            String funcName = safeName(fixCase(col.getName(), true));
+            String varName = safeName(fixCase(col.getName(), false));
 
             String attributes = "name=\"" + col.getName() + "\"";
             if(col.getPkOrdinal() != null && col.getPkOrdinal() >= 0) {
@@ -128,13 +131,13 @@ public class Generator {
             }
 
             sb.append("    @net.squarelabs.sqorm.annotation.Column(" + attributes + ")\n");
-            sb.append("    public " + type + " get" + safeName(col.getName()) + "() {\n");
-            sb.append("        return " + safeName(col.getName()) + ";\n");
+            sb.append("    public " + type + " get" + funcName + "() {\n");
+            sb.append("        return " + varName + ";\n");
             sb.append("    }\n");
             sb.append("\n");
             sb.append("    @net.squarelabs.sqorm.annotation.Column(" + attributes + ")\n");
-            sb.append("    public void set" + safeName(col.getName()) + "(" + type + " val) {\n");
-            sb.append("        this." + safeName(col.getName()) + " = val;\n");
+            sb.append("    public void set" + funcName + "(" + type + " val) {\n");
+            sb.append("        this." + varName + " = val;\n");
             sb.append("    }\n");
             sb.append("\n");
         }
@@ -149,14 +152,14 @@ public class Generator {
         }
         for (Relation rel : table.getParentRelations()) {
             String annotation = buildAnnotation(rel, false);
-            String foreignClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getForeignTableName());
-            String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getForeignTableName());
+            String foreignClassName = fixCase(rel.getForeignTableName(), true);
+            String varName = fixCase(rel.getForeignTableName(), false);
             String childName = varName + "Children";
             String colName = "Collection<" + foreignClassName + ">";
             int relCount = childRelCounts.get(rel.getForeignTableName());
             String funcName = foreignClassName + "Children";
             if(relCount > 1) {
-                String suffix = "By" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getName()); // HACK: Is there a better way to handle this?
+                String suffix = "By" + fixCase(rel.getName(), true); // HACK: Is there a better way to handle this?
                 funcName += suffix;
                 childName += suffix;
             }
@@ -187,13 +190,13 @@ public class Generator {
         }
         for (Relation rel : table.getChildRelations()) {
             String annotation = buildAnnotation(rel, true);
-            String primaryClassName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getPrimaryTableName());
-            String varName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, rel.getPrimaryTableName());
+            String primaryClassName = fixCase(rel.getPrimaryTableName(), true);
+            String varName = fixCase(rel.getPrimaryTableName(), false);
             String parentName = varName + "Parent";
             int relCount = childParentCounts.get(rel.getPrimaryTableName());
             String funcName = primaryClassName + "Parent";
             if(relCount > 1) {
-                String suffix = "By" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, rel.getName()); // HACK: Is there a better way to handle this?
+                String suffix = "By" + fixCase(rel.getName(), true); // HACK: Is there a better way to handle this?
                 funcName += suffix;
                 parentName += suffix;
             }
@@ -219,6 +222,44 @@ public class Generator {
         // Cleanup
         sb.append("}");
 
+        return sb.toString();
+    }
+
+    private static String fixCase(String name, boolean proper) {
+        boolean newWord = proper;
+        boolean wasUpper = false;
+        StringBuilder sb = new StringBuilder(name.length());
+        for(Character chr : name.toCharArray()) {
+
+            // Skip escape chars
+            if(chr == '_') {
+                newWord = true;
+                wasUpper = false;
+                continue;
+            }
+
+            // Determine new case
+            boolean isUpper = chr.isUpperCase(chr);
+            boolean nowUpper = isUpper;
+            if(wasUpper) {
+                nowUpper = false;
+            }
+            if(newWord) {
+                nowUpper = true;
+            }
+
+            // Change case
+            if(nowUpper) {
+                chr = chr.toUpperCase(chr);
+            } else {
+                chr = chr.toLowerCase(chr);
+            }
+            sb.append(chr);
+
+            // Save state
+            wasUpper = nowUpper;
+            newWord = false;
+        }
         return sb.toString();
     }
 
