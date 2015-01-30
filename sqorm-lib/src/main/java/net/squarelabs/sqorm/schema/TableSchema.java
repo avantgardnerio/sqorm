@@ -87,7 +87,7 @@ public class TableSchema {
         for (String colName : colNames) {
             ColumnSchema col = getColumn(colName);
             if (col == null) {
-                throw new RuntimeException("Column not found: " + colName);
+                throw new RuntimeException("Column not found [" + colName + "] on table [" + getName() + "]");
             }
             cols.add(col);
         }
